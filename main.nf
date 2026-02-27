@@ -6,8 +6,67 @@ include { UNTAR as UNTAR_EXOMISER } from './modules/local/tar/main'
 include { ENSEMBLVEP_VEP } from './modules/local/ensemblvep/vep/main'
 include { EXOMISER } from './modules/local/exomiser/main'
 
+
+def validate_params(param_obj){
+  // lots of optional tools, so need to do some checks depending on input flags to avoid wasting time
+  def all_errs = ""
+  if (!param_obj.disable_bcftools_strip){
+    def bcf_strip_min = [
+      "rm_fields_csv",
+      "annotate_vcf",
+      "bcftools_strip_extra_args"
+      ]
+    if (!bcf_strip_min.any { param -> param_obj.containsKey(param) }) {
+      all_errs += "At least one of ${bcf_strip_min} must be provided when bcftools_strip is enabled\n"
+    }
+  }
+  if (!param_obj.disable_bcftools_norm && !param_obj.fasta) {
+    all_errs += "Need a FASTA file to normalize\n"
+  }
+  if (!params.disable_vep) {
+    def vep_required = [
+      "vep_cache",
+      "assembly",
+      "vep_species",
+      "fasta"
+
+    ]
+    def missed = []
+    vep_required.each { param ->
+      if (!param_obj.containsKey(param) || !param_obj[param]) {
+        missed << param
+      }
+    }
+    if (missed){
+      all_errs += "Missing ${missed} params for VEP\n"
+    }
+  }
+  if (!params.disable_exomiser) {
+    def exomiser_required = [
+      "pheno_file",
+      "analysis_file",
+      "datadir_file"
+    ]
+    def missed = []
+    exomiser_required.each { param ->
+      if (!param_obj.containsKey(param) || !param_obj[param]) {
+        missed << param
+      }
+    }
+    if (missed){
+      all_errs += "Missing ${missed} params for exomiser\n"
+    }
+  }
+  if (all_errs){
+    error(all_errs)
+  }
+}
+
+
 workflow {
   main:
+    // validate params to start
+    validate_params(params)
     //flags
     vcf = channel.fromPath(params.vcf)
     vcf_index = channel.fromPath(params.vcf_index)
