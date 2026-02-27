@@ -553,5 +553,5 @@ $namespaces:
 - VEP
 - EXOMISER
 "sbg:links":
-- id: 'https://github.com/kids-first/kf-dev-single-cell-rna/releases/tag/v1.0.0'
+- id: 'https://github.com/d3b-center/D3b-RADIANT-Annotation/releases/tag/v1.0.0'
   label: github-release
