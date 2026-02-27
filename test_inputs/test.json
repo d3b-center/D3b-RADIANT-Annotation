@@ -1,0 +1,14 @@
+{
+    "vcf": "/home/ubuntu/volume/SB/projects/d3b-bixu/dev-wgsa/8fd91551-9f94-4d88-9aeb-163f02812f78.single.vqsr.filtered.vep_105.vcf.gz",
+    "vcf_index": "/home/ubuntu/volume/SB/projects/d3b-bixu/dev-wgsa/8fd91551-9f94-4d88-9aeb-163f02812f78.single.vqsr.filtered.vep_105.vcf.gz.tbi",
+    "output_basename": "TEST_VCF2",
+    "fasta": "/home/ubuntu/volume/SB/projects/d3b-bixu/dev-wgsa/Homo_sapiens_assembly38.fasta",
+    "vep_cache": "/home/ubuntu/volume/SB/projects/d3b-bixu/dev-wgsa/homo_sapiens_vep_111_GRCh38.tar.gz",
+    "datadir_file": "/home/ubuntu/volume/SB/projects/d3b-bixu/dev-wgsa/exomiser_2406_remm_cadd_datadir.tgz",
+    "analysis_file": "/home/ubuntu/volume/SB/projects/d3b-bixu/dev-wgsa/default_exomiser_WGS_analysis.yml",
+    "pheno_file": "/home/ubuntu/volume/SB/projects/d3b-bixu/dev-wgsa/BS_Z46JKE51.yml",
+    "exomiser_mem": 16,
+    "run_bcftools_strip": false,
+    "run_exomiser": false,
+    "aws_test_instance": true
+}
