@@ -528,8 +528,8 @@ inputs:
     sbg:icon: far fa-file-code
     sbg:pattern: ^\S+\.fn?a(sta)?(\.gz)?$
     type:
-    - 'null'
     - File
+    sbg:suggestedValue: { class: File, path: 60639014357c3a53540ca7a3, name: Homo_sapiens_assembly38.fasta }
 
 outputs:
 -   id: ENSEMBLVEP_VEP
