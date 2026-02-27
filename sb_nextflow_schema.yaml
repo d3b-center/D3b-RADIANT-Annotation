@@ -3,6 +3,8 @@ app_content:
 class: nextflow
 executor_version: 23.04.1
 cwlVersion: None
+label: D3b RADIANT Annotation
+id: d3b-radiant-annotation
 requirements:
 -   class: InlineJavascriptRequirement
 -   class: ShellCommandRequirement
@@ -18,7 +20,14 @@ requirements:
           ))
 
 doc: |
-    # D3b BIXU RADIANT Annotation
+    # D3b RADIANT Annotation
+
+    <p align="center">
+    <img src="docs/logo/d3b-inline-white.svg" alt="D3b repository logo" width="660px" />
+    </p>
+    <p align="center">
+    <a href="https://github.com/d3b-center/D3b-RADIANT-Annotation/blob/master/LICENSE"><img src="https://img.shields.io/github/license/d3b-center/D3b-RADIANT-Annotation.svg?style=for-the-badge"></a>
+    </p>
 
     Simple workflow to reannotate Kids First VEPs to be compatible with the RADIANT framework.
     However, this can also be used to annotate/reannotate any other VCF as needed to ensure the following requirements are met:
@@ -238,6 +247,7 @@ doc: |
     - `local_frequency`: custom frequency source file
     - `local_frequency_index`: Index of `local_frequency`
 
+
 hints:
 -   class: sbg:NextflowExecutionMode
     value: multi-instance
@@ -247,7 +257,7 @@ arguments:
 -   position: 0
     shellQuote: false
     valueFrom: >
-        -params-file input_params.json --sbg_run True --outdir ./results --max_cpus 96 --max_memory 128.GB --max_time 12.h
+        -params-file input_params.json --sbg_run True --outdir ./results --max_cpus 36 --max_memory 128.GB --max_time 12.h
 inputs:
 -   id: disable_bcftools_strip
     inputBinding:
@@ -358,6 +368,8 @@ inputs:
         prefix: --vep_cache
     type:
     - File
+    doc: VEP cache. Current standard is homo_sapiens_vep_111_GRCh38.tar.gz
+    sbg:suggestedValue: { class: File, path: 69a1b6ed55b9050ca7142b6f, name: homo_sapiens_vep_111_GRCh38.tar.gz }
 -   id: assembly
     inputBinding:
         prefix: --assembly
@@ -413,6 +425,7 @@ inputs:
     - 'null'
     - File
     doc: YAML with analysis options. See https://exomiser.readthedocs.io/en/latest/advanced_analysis.html#analysis. Recommend `default_exomiser_WGS_analysis.yml`
+    sbg:suggestedValue: { class: File, path: 69a1b6ed55b9050ca7142b6e, name: default_exomiser_WGS_analysis.yml }
 -   id: datadir_file
     inputBinding:
         prefix: --datadir_file
@@ -420,6 +433,7 @@ inputs:
     - 'null'
     - File
     doc: TAR GZ with referenece files for EXOMISER
+    sbg:suggestedValue: { class: File, path: 69a1b6ed55b9050ca7142b70, name: exomiser_2406_remm_cadd_datadir.tgz }
 -   id: datadir_name
     doc: Name of data directory after decompression of tar ball
     inputBinding:
@@ -514,9 +528,9 @@ inputs:
     sbg:icon: far fa-file-code
     sbg:pattern: ^\S+\.fn?a(sta)?(\.gz)?$
     type:
-    - 'null'
     - File
-label: D3b BIXU RADIANT Annotation
+    sbg:suggestedValue: { class: File, path: 60639014357c3a53540ca7a3, name: Homo_sapiens_assembly38.fasta }
+
 outputs:
 -   id: ENSEMBLVEP_VEP
     label: ENSEMBLVEP_VEP
@@ -530,3 +544,14 @@ outputs:
         glob: 'results/EXOMISER/*exomiser*'
     type:
     - File
+
+$namespaces:
+  sbg: https://sevenbridges.com
+"sbg:license": Apache License 2.0
+"sbg:publisher": KFDRC
+"sbg:categories":
+- VEP
+- EXOMISER
+"sbg:links":
+- id: 'https://github.com/kids-first/kf-dev-single-cell-rna/releases/tag/v1.0.0'
+  label: github-release
