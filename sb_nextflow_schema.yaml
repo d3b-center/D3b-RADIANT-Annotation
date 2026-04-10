@@ -3,7 +3,7 @@ app_content:
 class: nextflow
 executor_version: 23.04.1
 cwlVersion: None
-label: D3b RADIANT Annotation
+label: D3b RADIANT Annotation vep_v105
 id: d3b-radiant-annotation
 requirements:
 -   class: InlineJavascriptRequirement
@@ -38,7 +38,7 @@ doc: |
     ## Tools Run
     - `bcftools strip`: Uses `annotate` to remove existing VEP (`CSQ`) and gnomad 3.1.1 (`gnomad_3_1_1*`) annotations
     - `bcftools norm`: Uses `norm` to split (or join) mulit-allelics and normalize indels
-    - `VEP`: Uses cache 111 and meets the following specific criteria:
+    - `VEP`: Uses cache 105 and meets the following specific criteria:
         ```
         --canonical
         --format vcf 
@@ -61,7 +61,7 @@ doc: |
         --assembly GRCh38
         --species homo_sapiens
         --cache
-        --cache_version 111
+        --cache_version 105
         ```
     - `exomiser`: "The Exomiser is a Java program that finds potential disease-causing variants from whole-exome or whole-genome sequencing data." See https://github.com/exomiser/Exomiser for more details
 
@@ -72,7 +72,7 @@ doc: |
     - `vcf_index` = Index of `vcf`
     - `output_basename`: String prefix of file outputs. Technically optional, but strongly recommended. Default is `TEST`
     #### VEP
-    - `vep_cache`: VEP cache for annotation. Recommend 111, `homo_sapiens_vep_111_GRCh38.tar.gz` 
+    - `vep_cache`: VEP cache for annotation. Recommend 105, `homo_sapiens_vep_105_GRCh38.tar.gz` 
     - `fasta`: FASTA used during variant calling. Recommend `Homo_sapiens_assembly38.fasta`
     #### EXOMISER
     - `analysis_file`: YAML with analysis options. See https://exomiser.readthedocs.io/en/latest/advanced_analysis.html#analysis. Recommend `default_exomiser_WGS_analysis.yml`
@@ -218,7 +218,7 @@ doc: |
         ```
     #### VEP
     - `assembly`: `GRCh38`
-    - `vep_cache_version`: `111`
+    - `vep_cache_version`: `105`
     - `vep_species`: `homo_sapiens`
     - `vep_cpus`: `32`
     #### EXOMISER
@@ -368,8 +368,8 @@ inputs:
         prefix: --vep_cache
     type:
     - File
-    doc: VEP cache. Current standard is homo_sapiens_vep_111_GRCh38.tar.gz
-    sbg:suggestedValue: { class: File, path: 69a1b6ed55b9050ca7142b6f, name: homo_sapiens_vep_111_GRCh38.tar.gz }
+    doc: VEP cache. Current standard is homo_sapiens_vep_105_GRCh38.tar.gz
+    sbg:suggestedValue: { class: File, path: 69a1b6ed55b9050ca7142b6f, name: homo_sapiens_vep_105_GRCh38.tar.gz }
 -   id: assembly
     inputBinding:
         prefix: --assembly
@@ -381,11 +381,11 @@ inputs:
 -   id: vep_cache_version
     inputBinding:
         prefix: --vep_cache_version
-    default: 111
+    default: 105
     type:
     - 'null'
     - int
-    doc: VEP cache version to use for annotation. Default is `111`. If you have a different cache version, you can specify it here.
+    doc: VEP cache version to use for annotation. Default is `105`. If you have a different cache version, you can specify it here.
 -   id: exomiser_mem
     inputBinding:
         prefix: --exomiser_mem

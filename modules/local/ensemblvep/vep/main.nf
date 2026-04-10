@@ -2,8 +2,8 @@ process ENSEMBLVEP_VEP {
     label 'VEP'
 
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
-        'https://depot.galaxyproject.org/singularity/ensembl-vep:113.0--pl5321h2a3209d_0' :
-        'biocontainers/ensembl-vep:113.0--pl5321h2a3209d_0' }"
+        'https://depot.galaxyproject.org/singularity/ensembl-vep:105.0--pl5262h4a94de4_0' :
+        'biocontainers/ensembl-vep:105.0--pl5262h4a94de4_0' }"
 
     input:
     tuple path(vcf), path(vcf_index)
@@ -40,6 +40,7 @@ process ENSEMBLVEP_VEP {
         --assembly $genome \\
         --species $species \\
         --cache \\
+        --merged \\
         --cache_version $cache_version \\
         --dir_cache $dir_cache \\
         --fork $task.cpus && \\

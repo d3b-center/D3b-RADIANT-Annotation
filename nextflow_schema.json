@@ -138,7 +138,7 @@
         },
         "vep_cache_version": {
             "type": "integer",
-            "default": 111
+            "default": 105
         },
         "vep_species": {
             "type": "string",

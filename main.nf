@@ -75,7 +75,7 @@ workflow {
     annotate_vcf_index = params.annotate_vcf_index ? channel.fromPath(params.annotate_vcf_index) : channel.value([])
     // VEP
     vep_cache = channel.fromPath(params.vep_cache)
-    vep_cache_version = params.vep_cache_version ?: '111'
+    vep_cache_version = params.vep_cache_version ?: '105'
     assembly = params.assembly
     vep_species = params.vep_species
     fasta = channel.fromPath(params.fasta)
