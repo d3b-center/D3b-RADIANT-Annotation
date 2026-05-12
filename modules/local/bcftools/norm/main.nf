@@ -1,4 +1,5 @@
 process BCFTOOLS_NORM {
+    tag "${meta.id}"
     label 'C4'
     container 'pgc-images.sbgenomics.com/d3b-bixu/bcftools:1.20'
     // basic annotation functionality. See https://samtools.github.io/bcftools/howtos/annotate.html
@@ -10,7 +11,7 @@ process BCFTOOLS_NORM {
     tuple val(meta), path("*vcf.gz"), path("*vcf.gz.tbi"), emit: normed_vcf
 
     script:
-    def prefix = task.ext.prefix ?: "normalized"
+    def prefix = task.ext.prefix ?: "${meta.id}"
     def args = task.ext.args ?: ''
     """
     bcftools norm \\

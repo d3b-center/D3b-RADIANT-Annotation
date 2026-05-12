@@ -1,5 +1,5 @@
 process EXOMISER {
-
+    tag "${meta.id}"
     label 'C8_flex'
  
     input:
@@ -67,7 +67,6 @@ process EXOMISER {
 
     // Note: specifying the extra options (args) at the beginning because output options are ignored when they are passed at the end.
     """
-    #!/bin/bash -eo pipefail
     tar xzf ${datadir_tar} && \\
     java -Xmx${avail_mem}M -cp \$( cat /app/jib-classpath-file ) \$( cat /app/jib-main-class-file ) \\
         --vcf ${vcfFile} \\
@@ -76,11 +75,11 @@ process EXOMISER {
         --sample ${phenoFile} \\
         --output-format=HTML,JSON,TSV_GENE,TSV_VARIANT,VCF \\
         --output-directory=/`pwd` \\
-        ${args} \\
+        $args \\
         --exomiser.data-directory=/`pwd`/${datadir_name} \\
-        ${localFrequencyFileArgs} \\
-        ${remmArgs} \\
-        ${caddArgs} \\
+        $localFrequencyFileArgs \\
+        $remmArgs \\
+        $caddArgs \\
         --exomiser.${exomiserGenome}.data-version="${exomiserDataVersion}" \\
         --exomiser.phenotype.data-version="${exomiserDataVersion}" \\
         ${applicationPropertiesArgs}

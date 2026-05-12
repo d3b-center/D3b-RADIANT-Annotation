@@ -1,4 +1,5 @@
 process ENSEMBLVEP_VEP {
+    tag ${meta.id}
     label 'VEP'
 
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
@@ -25,7 +26,7 @@ process ENSEMBLVEP_VEP {
     def args = task.ext.args ?: ''
     def file_extension = args.contains("--vcf") ? 'vcf' : args.contains("--json")? 'json' : args.contains("--tab")? 'tab' : 'vcf'
     def compress_cmd = args.contains("--compress_output") ? '' : '--compress_output bgzip'
-    def prefix = task.ext.prefix ?: "vep_annotated"
+    def prefix = task.ext.prefix ?: "${meta.id}"
     def dir_cache = cache ? "./" : "/.vep"
     def reference = fasta ? "--fasta $fasta" : ""
     """
