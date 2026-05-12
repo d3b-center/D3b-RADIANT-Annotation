@@ -3,7 +3,7 @@ process EXOMISER {
     label 'C8_flex'
  
     input:
-    tuple path(vcfFile), path(indexFile), path(phenoFile), path(analysisFile)
+    tuple val(meta), path(vcfFile), path(indexFile), path(phenoFile), path(analysisFile)
     path datadir_tar
     val datadir_name // Name of the directory to be created after untarring the datadir_tar
     val exomiserGenome
@@ -22,8 +22,7 @@ process EXOMISER {
 
 
     output:
-    path("*vcf.gz")         , optional:true, emit: vcf
-    path("*vcf.gz.tbi")     , optional:true, emit: tbi
+    tuple val(meta), path("*vcf.gz"), path("*vcf.gz.tbi")         , optional:true, emit: vcf
     path("*html")           , optional:true, emit: html
     path("*json")           , optional:true, emit: json
     path("*genes.tsv")      , optional:true, emit: genetsv

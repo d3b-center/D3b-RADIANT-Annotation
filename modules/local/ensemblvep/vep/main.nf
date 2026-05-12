@@ -6,7 +6,7 @@ process ENSEMBLVEP_VEP {
         'biocontainers/ensembl-vep:113.0--pl5321h2a3209d_0' }"
 
     input:
-    tuple path(vcf), path(vcf_index)
+    tuple val(meta), path(vcf), path(vcf_index)
     val   genome
     val   species
     val   cache_version
@@ -15,8 +15,7 @@ process ENSEMBLVEP_VEP {
     path  extra_files
 
     output:
-    path("*.vcf.gz"), emit: vcf
-    path("*.vcf.gz.tbi"), emit: tbi
+    tuple val(meta), path("*.vcf.gz"), path("*.vcf.gz.tbi"), emit: annotated_vcf
     path "versions.yml", emit: versions
 
     when:
