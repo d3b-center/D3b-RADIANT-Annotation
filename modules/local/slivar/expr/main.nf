@@ -10,7 +10,7 @@ process SLIVAR_EXPR {
     path(gnotate_zips)
 
     output:
-    tuple val(meta), path("*.vcf.gz"), path("*.tbi") emit: filtered_vcf
+    tuple val(meta), path("*.vcf.gz"), path("*.tbi"), emit: filtered_vcf
 
     script:
     def args = task.ext.args ?: ''

@@ -9,7 +9,7 @@ process ECHTVAR_ANNO {
     path(echtvar_zips)
 
     output:
-    tuple val(meta), path("*.vcf.gz"), path("*.tbi") emit: indexed_annotated_vcf
+    tuple val(meta), path("*.vcf.gz"), path("*.tbi"), emit: indexed_annotated_vcf
 
     script:
     def args = task.ext.args ?: ''

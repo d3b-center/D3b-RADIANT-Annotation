@@ -9,28 +9,28 @@ include { SLIVAR_EXPR } from './modules/local/slivar/expr/main'
 include { SLIVAR_COMPOUND_HETS } from './modules/local/slivar/compound-hets/main'
 include { EXOMISER } from './modules/local/exomiser/main'
 
+def requireWhenEnabled(param_obj, errors, disabled_flag, required, tool_name, mode = 'ALL') {
+  if (!param_obj[disabled_flag]) {
+
+    def present = required.findAll { param_obj[it] }
+
+    if (mode == 'ALL' && present.size() != required.size()) {
+      errors << "Missing ${required - present} params for ${tool_name}"
+
+    } else if (mode == 'ANY' && present.isEmpty()) {
+      errors << "At least one of ${required} must be provided for ${tool_name}"
+    }
+  }
+}
+
 def validate_params(param_obj) {
 
   def errors = []
 
-  // helper: check required params if tool is enabled
-  def require_when_enabled = { disabled_flag, required, tool_name, mode = 'ALL' ->
-    if (!param_obj[disabled_flag]) {
-
-      def present = required.findAll { param_obj[it] }
-
-      if (mode == 'ALL' && present.size() != required.size()) {
-        def missing = required - present
-        errors << "Missing ${missing} params for ${tool_name}"
-
-      } else if (mode == 'ANY' && present.isEmpty()) {
-        errors << "At least one of ${required} must be provided for ${tool_name}"
-      }
-    }
-  }
-
   // bcftools strip: will work if ANY are set
-  require_when_enabled(
+  requireWhenEnabled(
+    param_obj,
+    errors,
     "disable_bcftools_strip",
     ["rm_fields_csv", "annotate_vcf", "bcftools_strip_extra_args"],
     "bcftools strip",
@@ -38,42 +38,52 @@ def validate_params(param_obj) {
   )
 
   // bcftools norm
-  require_when_enabled(
+  requireWhenEnabled(
+    param_obj,
+    errors,
     "disable_bcftools_norm",
     ["fasta"],
     "bcftools norm"
   )
 
   // VEP
-  require_when_enabled(
+  requireWhenEnabled(
+    param_obj,
+    errors,
     "disable_vep",
     ["vep_cache", "assembly", "vep_species", "fasta"],
     "VEP"
   )
 
   // gnomAD / Echtvar
-  require_when_enabled(
+  requireWhenEnabled(
+    param_obj,
+    errors,
     "disable_gnomad_anno",
     ["echtvar_zips"],
     "Echtvar anno"
   )
 
   // compound hets / slivar
-  require_when_enabled(
+  requireWhenEnabled(
+    param_obj,
+    errors,
     "disable_compound_hets",
     ["ped"],
     "Slivar compound-hets"
   )
 
   // exomiser
-  require_when_enabled(
+  requireWhenEnabled(
+    param_obj,
+    errors,
     "disable_exomiser",
     ["pheno_file", "analysis_file", "datadir_file"],
     "Exomiser"
   )
 
   if (errors) {
-    error(errors.join("\n"))
+    log.error(errors.join("\n"))
   }
 }
 
@@ -117,12 +127,12 @@ workflow {
     if (params.sbg_run){
       def path = file("input_params.json", checkIfExists: true)
       if (path){
-        println("SBG custom param inputs:")
-        println (path.text)
+        log.info("SBG custom param inputs:")
+        log.info(path.text)
       }
     }
 
-    indexed_vcf = vcf.combine(vcf_index).map{ vcf, tbi -> [["id": "TEST"], vcf, tbi]}
+    indexed_vcf = vcf.combine(vcf_index).map{ v, i -> [["id": "TEST"], v, i]}
 
     if (!params.disable_bcftools_strip){
       BCFTOOLS_STRIP(
@@ -175,7 +185,7 @@ workflow {
 
     if (!params.disable_exomiser) {
       EXOMISER(
-        indexed_vcf.combine(phenoFile).combine(analysisFile)
+        indexed_vcf.combine(phenoFile).combine(analysisFile),
         datadir_file,
         datadir_name,
         exomiserGenome,
