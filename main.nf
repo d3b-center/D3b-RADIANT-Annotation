@@ -5,6 +5,7 @@ include { BCFTOOLS_NORM } from './modules/local/bcftools/norm/main'
 include { UNTAR as UNTAR_EXOMISER } from './modules/local/tar/main'
 include { ENSEMBLVEP_VEP } from './modules/local/ensemblvep/vep/main'
 include { ECHTVAR_ANNO } from './modules/local/echtvar/anno/main'
+include { SLIVAR_EXPR } from './modules/local/slivar/expr/main'
 include { SLIVAR_COMPOUND_HETS } from './modules/local/slivar/compound-hets/main'
 include { EXOMISER } from './modules/local/exomiser/main'
 
@@ -92,6 +93,11 @@ workflow {
     assembly = params.assembly
     vep_species = params.vep_species
     fasta = channel.fromPath(params.fasta)
+    // echtvar
+    echtvar_zips = params.echtvar_zips ? channel.fromPath(params.echtvar_zips) : channel.empty()
+    // slivar
+    slivar_zips = params.slivar_zips ? channel.fromPath(params.slivar_zips) : channel.empty()
+    ped = params.ped ? channel.fromPath(params.ped) : channel.empty()
     // exomiser
     phenoFile = params.pheno_file ? channel.fromPath(params.pheno_file) : channel.value([])
     analysisFile = params.analysis_file ? channel.fromPath(params.analysis_file) : channel.value([])
@@ -156,8 +162,13 @@ workflow {
     }
 
     if (!params.disable_compount_hets) {
-      SLIVAR_COMPOUND_HETS(
+      SLIVAR_EXPR(
         indexed_vcf,
+        ped,
+        slivar_zips
+      )
+      SLIVAR_COMPOUND_HETS(
+        SLIVAR_EXPR.out.filtered_vcf,
         ped
       )
     }

@@ -1,4 +1,4 @@
-process SLIVAR_COMPOUND_HETS {
+process SLIVAR_PSLIVAR {
     tag "${meta.id}"
     label 'process_low'
 
@@ -6,20 +6,26 @@ process SLIVAR_COMPOUND_HETS {
 
     input:
     tuple val(meta), path(vcf), path(vcf_index)
+    path(fasta)
     path(ped)
+    path(gnotate_zips)
 
     output:
-    tuple val(meta), path("*.vcf.gz"), path("*.tbi") emit: compound_hets
+    tuple val(meta), path("*.vcf.gz"), path("*.tbi") emit: filtered_vcf
 
     script:
     def args = task.ext.args ?: ''
     def prefix = task.ext.prefix ?: "${meta.id}"
-    def zips_arg = echtvar_zips.collect{ zip -> "-e ${zip}" }.join(" ")  
+    def ped_arg = ped ? "--ped ${ped}" : ''
+    def zips_arg = gnotate_zips ? gnotate_zips.collect{ zip -> "-g ${zip}" }.join(" ") : ''
     """
-    slivar compound-hets \\
+    pslivar \\
         --vcf $vcf \\
-        --ped $ped \\
         --out-vcf ${prefix}.vcf.gz \\
+        --fasta $fasta \\
+	--js /opt/slivar/slivar-functions.js \\
+        $ped_arg \\
+        $zips_arg \\
         $args \\
     && bcftools index --tbi ${prefix}.vcf.gz
     """
