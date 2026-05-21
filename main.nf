@@ -171,7 +171,7 @@ workflow {
       indexed_vcf = ECHTVAR_ANNO.out.annotated_vcf
     }
 
-    if (!params.disable_compount_hets) {
+    if (!params.disable_compound_hets) {
       SLIVAR_EXPR(
         indexed_vcf,
         ped,

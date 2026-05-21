@@ -1,5 +1,5 @@
 process UNTAR{ 
-    label 'C8'
+    label 'C4'
     container "pgc-images.sbgenomics.com/d3b-bixu/cutadapt:3.4"
     input:
     path tarFile
