@@ -17,7 +17,7 @@ process ECHTVAR_ANNO {
     def zips_arg = echtvar_zips.collect{ zip -> "-e ${zip}" }.join(" ")  
     """
     echtvar anno \\
-        $echtvar_zips \\
+        $zips_arg \\
         $args \\
         $vcf \\
         ${prefix}.vcf.gz \\
