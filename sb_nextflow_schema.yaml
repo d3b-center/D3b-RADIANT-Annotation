@@ -257,53 +257,8 @@ arguments:
 -   position: 0
     shellQuote: false
     valueFrom: >
-        -params-file input_params.json --sbg_run True --outdir ./results --max_cpus 36 --max_memory 128.GB --max_time 12.h
+        -params-file input_params.json --sbg_run True --outdir ./results
 inputs:
--   id: disable_bcftools_strip
-    inputBinding:
-        prefix: --disable_bcftools_strip
-    type:
-    - 'null'
-    - boolean
-    default: false
-    doc: "Set to true to skip BCFTOOLS strip step and keep all existing annotations in VCF"
--   id: disable_bcftools_norm
-    inputBinding:
-        prefix: --disable_bcftools_norm
-    type:
-    - 'null'
-    - boolean
-    doc: "Set to true to skip BCFTOOLS norm step if normalization has already ben performed or is not needed. DEFAULT IS TRUE for KF VCFs"
-    default: true
--   id: disable_vep
-    inputBinding:
-        prefix: --disable_vep
-    type:
-    - 'null'
-    - boolean
-    default: false
-    doc: "Set to true to skip VEP step if VEP annotation has already been performed or is not needed"
--   id: disable_exomiser
-    inputBinding:
-        prefix: --disable_exomiser
-    type:
-    - 'null'
-    - boolean
-    default: false
-    doc: "Set to true to skip EXOMISER step if EXOMISER annotation has already been performed or is not needed"
--   id: rm_fields_csv
-    inputBinding:
-        prefix: --rm_fields_csv
-    default: INFO/CSQ,INFO/gnomad_3_1_1_AC,INFO/gnomad_3_1_1_AN,INFO/gnomad_3_1_1_AF,INFO/gnomad_3_1_1_nhomalt,INFO/gnomad_3_1_1_AC_popmax,INFO/gnomad_3_1_1_AN_popmax,INFO/gnomad_3_1_1_AF_popmax,INFO/gnomad_3_1_1_nhomalt_popmax,INFO/gnomad_3_1_1_AC_controls_and_biobanks,INFO/gnomad_3_1_1_AN_controls_and_biobanks,INFO/gnomad_3_1_1_AF_controls_and_biobanks,INFO/gnomad_3_1_1_AF_non_cancer,INFO/gnomad_3_1_1_primate_ai_score,INFO/gnomad_3_1_1_splice_ai_consequence,INFO/gnomad_3_1_1_FILTER,INFO/gnomad_3_1_1_AF_non_cancer_afr,INFO/gnomad_3_1_1_AF_non_cancer_ami,INFO/gnomad_3_1_1_AF_non_cancer_asj,INFO/gnomad_3_1_1_AF_non_cancer_eas,INFO/gnomad_3_1_1_AF_non_cancer_fin,INFO/gnomad_3_1_1_AF_non_cancer_mid,INFO/gnomad_3_1_1_AF_non_cancer_nfe,INFO/gnomad_3_1_1_AF_non_cancer_oth,INFO/gnomad_3_1_1_AF_non_cancer_raw,INFO/gnomad_3_1_1_AF_non_cancer_sas,INFO/gnomad_3_1_1_AF_non_cancer_amr,INFO/gnomad_3_1_1_AF_non_cancer_popmax,INFO/gnomad_3_1_1_AF_non_cancer_all_popmax
-    type:
-    - 'null'
-    - string
-    doc: |
-        Comma-separated list of fields to remove from the VCF. Default is to remove all existing VEP and gnomad 3.1.1 annotations.
-        If you want to keep all existing annotations, set `--disable_bcftools_strip` to true.
--   id: bcftools_strip_extra_args
-    type: 'string[]?'
-    doc: Extra arguments to pass to bcftools strip command
 -   id: vcf
     inputBinding:
         prefix: --vcf
@@ -316,38 +271,69 @@ inputs:
     type:
     - File
     doc: Index of the input VCF file.
--   id: annotate_vcf
+-   id: output_basename
+    inputBinding:
+        prefix: --output_basename
+    type:
+    - string
+    doc: String prefix of file outputs.
+-   id: disable_bcftools_strip_annot
+    inputBinding:
+        prefix: --disable_bcftools_strip
+    type:
+    - 'null'
+    - name: truefalse
+      type: enum
+      symbols:
+       - true
+       - false
+    doc: "Set to true to skip BCFTOOLS strip/annot step and keep all existing annotations in VCF"
+-   id: bcftools_strip_rm_fields_csv
+    inputBinding:
+        prefix: --rm_fields_csv
+    type:
+    - 'null'
+    - string
+    doc: |
+        Comma-separated list of fields to remove from the VCF. Default is to remove all existing VEP and gnomad 3.1.1 annotations.
+        If you want to keep all existing annotations, set `--disable_bcftools_strip` to true.
+-   id: bcftools_strip_extra_args
+    type: 'string[]?'
+    doc: Extra arguments to pass to bcftools strip command
+-   id: bcftools_annotate_vcf
     inputBinding:
         prefix: --annotate_vcf
     type:
     - 'null'
     - File
-    doc: Optional. VCF file to use to add annotations using bcftools. If provided, the VCF will be annotated with the fields specified in `--annot_fields_csv`. If not provided, no additional annotations will be added.
--   id: annotate_vcf_index
+    doc: Optional. VCF file to use to add annotations using bcftools. If provided, the VCF will be annotated with the fields specified in `bcftools_annotate_fields_csv`. If not provided, no additional annotations will be added.
+-   id: bcftools_annotate_vcf_index
     inputBinding:
         prefix: --annotate_vcf_index
     type:
     - 'null'
     - File
--   id: annot_fields_csv
+-   id: bcftools_annotate_fields_csv
     inputBinding:
         prefix: --annot_fields_csv
     type:
     - 'null'
     - string
-    doc: Optional. Comma-separated list of fields to use from `annotate_vcf` and/or list of fields to rename.
--   id: output_basename
+    doc: Optional. Comma-separated list of fields to use from `bcftools_annotate_vcf` and/or list of fields to rename.
+-   id: disable_bcftools_norm
     inputBinding:
-        prefix: --output_basename
-    default: TEST
+        prefix: --disable_bcftools_norm
     type:
     - 'null'
-    - string
-    doc: String prefix of file outputs. Technically optional, but strongly recommended. Default is `TEST`
--   id: check_ref
+    - name: truefalse
+      type: enum
+      symbols:
+       - true
+       - false
+    doc: "Set to true to skip BCFTOOLS norm step if normalization has already ben performed or is not needed. DEFAULT IS TRUE for KF VCFs"
+-   id: bcftools_norm_check_ref
     inputBinding:
         prefix: --check_ref
-    default: w
     type:
     - 'null'
     - name: check_ref
@@ -358,11 +344,22 @@ inputs:
        - x
        - s
     doc: For BCFTOOLS norm. Check REF alleles and exit (e), warn (w), exclude (x), or set (s) bad sites
--   id: multiallelics
+-   id: bcftools_norm_multiallelics
     type:
     - 'null'
     - string
     doc: "Split multiallelics (-) or join biallelics (+), type: snps|indels|both|any"
+-   id: disable_vep
+    inputBinding:
+        prefix: --disable_vep
+    type:
+    - 'null'
+    - name: truefalse
+      type: enum
+      symbols:
+       - true
+       - false
+    doc: "Set to true to skip VEP step if VEP annotation has already been performed or is not needed"
 -   id: vep_cache
     inputBinding:
         prefix: --vep_cache
@@ -370,10 +367,9 @@ inputs:
     - File
     doc: VEP cache. Current standard is homo_sapiens_vep_111_GRCh38.tar.gz
     sbg:suggestedValue: { class: File, path: 69a1b6ed55b9050ca7142b6f, name: homo_sapiens_vep_111_GRCh38.tar.gz }
--   id: assembly
+-   id: vep_assembly
     inputBinding:
         prefix: --assembly
-    default: GRCh38
     type:
     - 'null'
     - string
@@ -381,31 +377,13 @@ inputs:
 -   id: vep_cache_version
     inputBinding:
         prefix: --vep_cache_version
-    default: 111
     type:
     - 'null'
     - int
     doc: VEP cache version to use for annotation. Default is `111`. If you have a different cache version, you can specify it here.
--   id: exomiser_mem
-    inputBinding:
-        prefix: --exomiser_mem
-    default: 16
-    type:
-    - 'null'
-    - int
-    doc: Memory to allocate for Exomiser in GB. Default is `16`. You can specify up to `32` GB if needed.
--   id: vep_cpu
-    inputBinding:
-        prefix: --vep_cpu
-    default: 32
-    type:
-    - 'null'
-    - int
-    doc: Number of CPUs to allocate for VEP. Default is `32`. This is the max for this implementation, but you can specify fewer if needed.
 -   id: vep_species
     inputBinding:
         prefix: --vep_species
-    default: homo_sapiens
     type:
     - 'null'
     - string
@@ -413,12 +391,72 @@ inputs:
 -   id: vep_buffer_size
     inputBinding:
         prefix: --vep_buffer_size
-    default: 100000
     type:
     - 'null'
     - int
     doc: VEP buffer size. Adjust for memory usage as needed
--   id: analysis_file
+-   id: vep_cpu
+    inputBinding:
+        prefix: --vep_cpu
+    type:
+    - 'null'
+    - int
+    doc: Number of CPUs to allocate for VEP. Default is `32`. This is the max for this implementation, but you can specify fewer if needed.
+-   id: disable_echtvar_anno
+    inputBinding:
+        prefix: --disable_gnomad_anno
+    type:
+    - 'null'
+    - name: truefalse
+      type: enum
+      symbols:
+       - true
+       - false
+    doc: "Set to true to skip gnomAD site-based annotaiton with echtvar"
+-   id: ectvar_gnomad_zip
+    inputBinding:
+        prefix: --echtvar_zips
+    type:
+    - 'null'
+    - File[]
+    doc: Echtvar-formated ZIP file containing gnomAD annotation information.
+    inputBinding:
+        prefix: --disable_compound_hets
+-   id: disable_slivar_compound_hets
+    type:
+    - 'null'
+    - name: truefalse
+      type: enum
+      symbols:
+       - true
+       - false
+    doc: "Set to true to skip Slivar compound-hets analysis. Experimental: disabled by default."
+-   id: slivar_ped
+    inputBinding:
+        prefix: --ped
+    type:
+    - 'null'
+    - File
+    doc: Pedigree file detailing family relationships of individuals in VCF. Necessary for performing Compound Hets analysis.
+-   id: slivar_compound_hets_annot_zips
+    inputBinding:
+        prefix: --slivar_zips
+    type:
+    - 'null'
+    - File[]
+    doc: Slivar-formated ZIP files containing additional annotations for performing Compound Hets analysis.
+-   id: disable_exomiser
+    inputBinding:
+        prefix: --disable_exomiser
+    type:
+    - 'null'
+    - name: truefalse
+      type: enum
+      symbols:
+       - true
+       - false
+    doc: "Set to true to skip EXOMISER step if EXOMISER annotation has already been performed or is not needed. Disabled by default."
+-   id: exomiser_analysis_file
     inputBinding:
         prefix: --analysis_file
     type:
@@ -426,7 +464,7 @@ inputs:
     - File
     doc: YAML with analysis options. See https://exomiser.readthedocs.io/en/latest/advanced_analysis.html#analysis. Recommend `default_exomiser_WGS_analysis.yml`
     sbg:suggestedValue: { class: File, path: 69a1b6ed55b9050ca7142b6e, name: default_exomiser_WGS_analysis.yml }
--   id: datadir_file
+-   id: exomiser_datadir_file
     inputBinding:
         prefix: --datadir_file
     type:
@@ -434,98 +472,94 @@ inputs:
     - File
     doc: TAR GZ with referenece files for EXOMISER
     sbg:suggestedValue: { class: File, path: 69a1b6ed55b9050ca7142b70, name: exomiser_2406_remm_cadd_datadir.tgz }
--   id: datadir_name
+-   id: exomiser_datadir_name
     doc: Name of data directory after decompression of tar ball
     inputBinding:
         prefix: --datadir_name
-    default: data
     type:
     - 'null'
     - string
--   id: local_frequency
+-   id: exomiser_local_frequency
     inputBinding:
         prefix: --local_frequency
     type:
     - 'null'
     - File
     doc: Optional. Custom frequency source file for Exomiser. If provided, this will be used instead of the default frequency sources.
--   id: local_frequency_index
+-   id: exomiser_local_frequency_index
     inputBinding:
         prefix: --local_frequency_index
     type:
     - 'null'
     - File
--   id: pheno_file
+-   id: exomiser_pheno_file
     inputBinding:
         prefix: --pheno_file
     type:
     - 'null'
     - File
     doc: YAML file with sample information. This is used to provide phenotypic information to Exomiser. See the documentation for more details on the format.
--   id: cadd_indelname
+-   id: exomiser_exomiser_mem
+    inputBinding:
+        prefix: --exomiser_mem
+    type:
+    - 'null'
+    - int
+    doc: Memory to allocate for Exomiser in GB. Default is `16`. You can specify up to `32` GB if needed.
+-   id: exomiser_cadd_indelname
     inputBinding:
         prefix: --cadd_indelname
-    default: gnomad.genomes.r4.0.indel.tsv.gz
     type:
     - 'null'
     - string
     doc: Name of the CADD indel file. Default is `gnomad.genomes.r4.0.indel.tsv.gz`. If you have a different file, you can specify it here.
--   id: cadd_snvname
+-   id: exomiser_cadd_snvname
     inputBinding:
         prefix: --cadd_snvname
-    default: whole_genome_SNVs.tsv.gz
     type:
     - 'null'
     - string
     doc: Name of the CADD SNV file. Default is `whole_genome_SNVs.tsv.gz`. If you have a different file, you can specify it here.
--   id: cadd_version
+-   id: exomiser_cadd_version
     inputBinding:
         prefix: --cadd_version
-    default: 1.7
     type:
     - 'null'
     - float
     doc: CADD version to use for annotation. Default is `1.7`. If you have a different version, you can specify it here.
--   id: exomiser_version
+-   id: exomiser_exomiser_version
     inputBinding:
         prefix: --exomiser_version
-    default: 2406
     type:
     - 'null'
     - int
     doc: Exomiser version to use for annotation. Default is `2406`. If you have a different version, you can specify it here.
--   id: exomiser_genome
+-   id: exomiser_exomiser_genome
     inputBinding:
         prefix: --exomiser_genome
-    default: hg38
     type:
     - 'null'
     - string
     doc: Genome to use for Exomiser annotation. Default is `hg38`. If you have a different genome, you can specify it here.
--   id: remm_filename
+-   id: exomiser_remm_filename
     inputBinding:
         prefix: --remm_filename
-    default: ReMM.v0.4.hg38.tsv.gz
     type:
     - 'null'
     - string
     doc: Name of the ReMM file to use for Exomiser annotation. Default is `ReMM.v0.4.hg38.tsv.gz`. If you have a different file, you can specify it here.
--   id: remm_version
+-   id: exomiser_remm_version
     inputBinding:
         prefix: --remm_version
-    default: v0.4
     type:
     - 'null'
     - string
     doc: Version of the ReMM file to use for Exomiser annotation. Default is `v0.4`. If you have a different version, you can specify it here.
 -   doc: FASTA reference for input VCF.
-    format: text/plain
     id: fasta
     inputBinding:
         prefix: --fasta
     label: fasta
-    sbg:category: Reference genome options
-    sbg:icon: far fa-file-code
     sbg:pattern: ^\S+\.fn?a(sta)?(\.gz)?$
     type:
     - File
@@ -543,7 +577,13 @@ outputs:
     outputBinding:
         glob: 'results/EXOMISER/*exomiser*'
     type:
-    - File
+    - File?
+-   id: SLIVAR
+    label: SLIVAR
+    outputBinding:
+        glob: 'results/slivar/*vcf.gz*'
+    type:
+    - File?
 
 $namespaces:
   sbg: https://sevenbridges.com

@@ -105,7 +105,7 @@ workflow {
     annotate_vcf_index = params.annotate_vcf_index ? channel.fromPath(params.annotate_vcf_index) : channel.value([])
     // VEP
     vep_cache = channel.fromPath(params.vep_cache)
-    vep_cache_version = params.vep_cache_version ?: '105'
+    vep_cache_version = params.vep_cache_version
     assembly = params.assembly
     vep_species = params.vep_species
     fasta = channel.fromPath(params.fasta)
@@ -118,9 +118,9 @@ workflow {
     phenoFile = params.pheno_file ? channel.fromPath(params.pheno_file) : channel.value([])
     analysisFile = params.analysis_file ? channel.fromPath(params.analysis_file) : channel.value([])
     datadir_file = params.datadir_file ? channel.fromPath(params.datadir_file) : channel.value([])
-    datadir_name = params.datadir_name ?: "data"
-    exomiserGenome = params.exomiser_genome ?: 'GRCh38'
-    exomiserDataVersion = params.exomiser_version ?: '2406'
+    datadir_name = params.datadir_name
+    exomiserGenome = params.exomiser_genome
+    exomiserDataVersion = params.exomiser_version
     localFrequencyPath = params.local_frequency ? channel.fromPath(params.local_frequency) : channel.value([])
     localFrequencyIndexPath = params.local_frequency_index ? channel.fromPath(params.local_frequency_index) : channel.value([])
     remmVersion = params.remm_version ? channel.value(params.remm_version) : channel.value("")
