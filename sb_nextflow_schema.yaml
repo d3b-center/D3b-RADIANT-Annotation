@@ -420,9 +420,9 @@ inputs:
     - 'null'
     - File[]
     doc: Echtvar-formated ZIP file containing gnomAD annotation information.
+-   id: disable_slivar_compound_hets
     inputBinding:
         prefix: --disable_compound_hets
--   id: disable_slivar_compound_hets
     type:
     - 'null'
     - name: truefalse
