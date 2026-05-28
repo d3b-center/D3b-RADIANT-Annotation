@@ -572,6 +572,12 @@ outputs:
         glob: 'results/ENSEMBLVEP_VEP/*vcf.gz*'
     type:
     - File
+-   id: ECHTVAR
+    label: ECHTVAR
+    outputBinding:
+        glob: 'results/ECHTVAR/*vcf.gz*'
+    type:
+    - File?
 -   id: EXOMISER
     label: EXOMISER
     outputBinding:
@@ -581,7 +587,7 @@ outputs:
 -   id: SLIVAR
     label: SLIVAR
     outputBinding:
-        glob: 'results/slivar/*vcf.gz*'
+        glob: 'results/SLIVAR/*vcf.gz*'
     type:
     - File?
 
