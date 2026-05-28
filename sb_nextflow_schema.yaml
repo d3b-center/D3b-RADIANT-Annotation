@@ -431,7 +431,7 @@ inputs:
        - true
        - false
     doc: "Set to true to skip Slivar compound-hets analysis. Experimental: disabled by default."
--   id: slivar_ped
+-   id: slivar_compound_hets_ped
     inputBinding:
         prefix: --ped
     type:
