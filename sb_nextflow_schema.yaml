@@ -277,7 +277,7 @@ inputs:
     type:
     - string
     doc: String prefix of file outputs.
--   id: disable_bcftools_strip_annot
+-   id: disable_bcftools_strip_anno
     inputBinding:
         prefix: --disable_bcftools_strip
     type:
@@ -287,7 +287,7 @@ inputs:
       symbols:
        - true
        - false
-    doc: "Set to true to skip BCFTOOLS strip/annot step and keep all existing annotations in VCF"
+    doc: "Set to true to skip BCFTOOLS strip/anno step and keep all existing annotations in VCF"
 -   id: bcftools_strip_rm_fields_csv
     inputBinding:
         prefix: --rm_fields_csv
@@ -300,20 +300,20 @@ inputs:
 -   id: bcftools_strip_extra_args
     type: 'string[]?'
     doc: Extra arguments to pass to bcftools strip command
--   id: bcftools_annotate_vcf
+-   id: bcftools_anno_vcf
     inputBinding:
         prefix: --annotate_vcf
     type:
     - 'null'
     - File
     doc: Optional. VCF file to use to add annotations using bcftools. If provided, the VCF will be annotated with the fields specified in `bcftools_annotate_fields_csv`. If not provided, no additional annotations will be added.
--   id: bcftools_annotate_vcf_index
+-   id: bcftools_anno_vcf_index
     inputBinding:
         prefix: --annotate_vcf_index
     type:
     - 'null'
     - File
--   id: bcftools_annotate_fields_csv
+-   id: bcftools_anno_fields_csv
     inputBinding:
         prefix: --annot_fields_csv
     type:
@@ -438,7 +438,7 @@ inputs:
     - 'null'
     - File
     doc: Pedigree file detailing family relationships of individuals in VCF. Necessary for performing Compound Hets analysis.
--   id: slivar_compound_hets_annot_zips
+-   id: slivar_compound_hets_anno_zips
     inputBinding:
         prefix: --slivar_zips
     type:
