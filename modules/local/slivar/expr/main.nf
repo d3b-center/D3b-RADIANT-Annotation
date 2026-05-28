@@ -2,7 +2,7 @@ process SLIVAR_EXPR {
     tag "${meta.id}"
     label 'process_low'
 
-    container "pgc-images.sbgenomics.com/danmiller/slivar:0.3.4"
+    container "pgc-images.sbgenomics.com/d3b-bixu/slivar:0.3.4"
 
     input:
     tuple val(meta), path(vcf), path(vcf_index)
