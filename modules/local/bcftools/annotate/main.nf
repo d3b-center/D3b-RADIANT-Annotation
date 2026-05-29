@@ -1,17 +1,17 @@
 process BCFTOOLS_ANNOTATE {
+    tag "${meta.id}"
     label 'C4'
     container 'pgc-images.sbgenomics.com/d3b-bixu/bcftools:1.20'
     // basic annotation functionality. See https://samtools.github.io/bcftools/howtos/annotate.html
     input:
-    tuple path(vcf), path(vcf_index)
-    path(annotate_vcf)
-    path(annotate_vcf_index)
+    tuple val(meta), path(vcf), path(vcf_index)
+    tuple path(annotate_vcf), path(annotate_vcf_index)
 
     output:
-    tuple path("*vcf.gz"), path("*vcf.gz.tbi"), emit: annotated_vcf
+    tuple val(meta), path("*vcf.gz"), path("*vcf.gz.tbi"), emit: annotated_vcf
 
     script:
-    def prefix = task.ext.prefix ?: "annotated"
+    def prefix = task.ext.prefix ?: "${meta.id}"
     def args = task.ext.args ?: ''
     def annot_vcf_input = annotate_vcf ? "-a ${annotate_vcf}" : ''
     """
@@ -22,6 +22,6 @@ process BCFTOOLS_ANNOTATE {
         -o ${prefix}.vcf.gz \\
         ${annot_vcf_input} \\
         $args \\
-        ${vcf}
+        $vcf
     """
 }

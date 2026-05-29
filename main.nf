@@ -4,64 +4,94 @@ include { BCFTOOLS_ANNOTATE as BCFTOOLS_STRIP } from './modules/local/bcftools/a
 include { BCFTOOLS_NORM } from './modules/local/bcftools/norm/main'
 include { UNTAR as UNTAR_EXOMISER } from './modules/local/tar/main'
 include { ENSEMBLVEP_VEP } from './modules/local/ensemblvep/vep/main'
+include { ECHTVAR_ANNO } from './modules/local/echtvar/anno/main'
+include { SLIVAR_EXPR } from './modules/local/slivar/expr/main'
+include { SLIVAR_COMPOUND_HETS } from './modules/local/slivar/compound-hets/main'
 include { EXOMISER } from './modules/local/exomiser/main'
 
+def asBool(v) {
+  if (v instanceof Boolean) return v
+  if (v == null) return false
+  return v.toString().toLowerCase() == 'true'
+}
 
-def validate_params(param_obj){
-  // lots of optional tools, so need to do some checks depending on input flags to avoid wasting time
-  def all_errs = ""
-  if (!param_obj.disable_bcftools_strip){
-    def bcf_strip_min = [
-      "rm_fields_csv",
-      "annotate_vcf",
-      "bcftools_strip_extra_args"
-      ]
-    if (!bcf_strip_min.any { param -> param_obj.containsKey(param) }) {
-      all_errs += "At least one of ${bcf_strip_min} must be provided when bcftools_strip is enabled\n"
-    }
-  }
-  if (!param_obj.disable_bcftools_norm && !param_obj.fasta) {
-    all_errs += "Need a FASTA file to normalize\n"
-  }
-  if (!params.disable_vep) {
-    def vep_required = [
-      "vep_cache",
-      "assembly",
-      "vep_species",
-      "fasta"
+def requireWhenEnabled(param_obj, errors, disabled_flag, required, tool_name, mode = 'ALL') {
+  if (!asBool(param_obj[disabled_flag])) {
 
-    ]
-    def missed = []
-    vep_required.each { param ->
-      if (!param_obj.containsKey(param) || !param_obj[param]) {
-        missed << param
-      }
+    def present = required.findAll { param_obj[it] }
+
+    if (mode == 'ALL' && present.size() != required.size()) {
+      errors << "Missing ${required - present} params for ${tool_name}"
+
+    } else if (mode == 'ANY' && present.isEmpty()) {
+      errors << "At least one of ${required} must be provided for ${tool_name}"
     }
-    if (missed){
-      all_errs += "Missing ${missed} params for VEP\n"
-    }
-  }
-  if (!params.disable_exomiser) {
-    def exomiser_required = [
-      "pheno_file",
-      "analysis_file",
-      "datadir_file"
-    ]
-    def missed = []
-    exomiser_required.each { param ->
-      if (!param_obj.containsKey(param) || !param_obj[param]) {
-        missed << param
-      }
-    }
-    if (missed){
-      all_errs += "Missing ${missed} params for exomiser\n"
-    }
-  }
-  if (all_errs){
-    error(all_errs)
   }
 }
 
+def validate_params(param_obj) {
+
+  def errors = []
+
+  // bcftools strip: will work if ANY are set
+  requireWhenEnabled(
+    param_obj,
+    errors,
+    "disable_bcftools_strip",
+    ["rm_fields_csv", "annotate_vcf", "bcftools_strip_extra_args"],
+    "bcftools strip",
+    "ANY"
+  )
+
+  // bcftools norm
+  requireWhenEnabled(
+    param_obj,
+    errors,
+    "disable_bcftools_norm",
+    ["fasta"],
+    "bcftools norm"
+  )
+
+  // VEP
+  requireWhenEnabled(
+    param_obj,
+    errors,
+    "disable_vep",
+    ["vep_cache", "assembly", "vep_species", "fasta"],
+    "VEP"
+  )
+
+  // gnomAD / Echtvar
+  requireWhenEnabled(
+    param_obj,
+    errors,
+    "disable_gnomad_anno",
+    ["echtvar_zips"],
+    "Echtvar anno"
+  )
+
+  // compound hets / slivar
+  requireWhenEnabled(
+    param_obj,
+    errors,
+    "disable_compound_hets",
+    ["ped"],
+    "Slivar compound-hets"
+  )
+
+  // exomiser
+  requireWhenEnabled(
+    param_obj,
+    errors,
+    "disable_exomiser",
+    ["pheno_file", "analysis_file", "datadir_file"],
+    "Exomiser"
+  )
+
+  if (errors) {
+    log.error(errors.join("\n"))
+  }
+}
 
 workflow {
   main:
@@ -75,17 +105,22 @@ workflow {
     annotate_vcf_index = params.annotate_vcf_index ? channel.fromPath(params.annotate_vcf_index) : channel.value([])
     // VEP
     vep_cache = channel.fromPath(params.vep_cache)
-    vep_cache_version = params.vep_cache_version ?: '111'
+    vep_cache_version = params.vep_cache_version
     assembly = params.assembly
     vep_species = params.vep_species
     fasta = channel.fromPath(params.fasta)
+    // echtvar
+    echtvar_zips = params.echtvar_zips ? channel.fromPath(params.echtvar_zips) : channel.empty()
+    // slivar
+    slivar_zips = params.slivar_zips ? channel.fromPath(params.slivar_zips) : channel.empty()
+    ped = params.ped ? channel.fromPath(params.ped) : channel.empty()
     // exomiser
     phenoFile = params.pheno_file ? channel.fromPath(params.pheno_file) : channel.value([])
     analysisFile = params.analysis_file ? channel.fromPath(params.analysis_file) : channel.value([])
     datadir_file = params.datadir_file ? channel.fromPath(params.datadir_file) : channel.value([])
-    datadir_name = params.datadir_name ?: "data"
-    exomiserGenome = params.exomiser_genome ?: 'GRCh38'
-    exomiserDataVersion = params.exomiser_version ?: '2406'
+    datadir_name = params.datadir_name
+    exomiserGenome = params.exomiser_genome
+    exomiserDataVersion = params.exomiser_version
     localFrequencyPath = params.local_frequency ? channel.fromPath(params.local_frequency) : channel.value([])
     localFrequencyIndexPath = params.local_frequency_index ? channel.fromPath(params.local_frequency_index) : channel.value([])
     remmVersion = params.remm_version ? channel.value(params.remm_version) : channel.value("")
@@ -95,30 +130,34 @@ workflow {
     caddIndelFileName = params.cadd_indelname ? channel.value(params.cadd_indelname) : channel.value("")
 
     // CAVATICA DEBUG
-    if (params.sbg_run){
+    if (asBool(params.sbg_run)){
       def path = file("input_params.json", checkIfExists: true)
       if (path){
-        println("SBG custom param inputs:")
-        println (path.text)
+        log.info("SBG custom param inputs:")
+        log.info(path.text)
       }
     }
 
-    indexed_vcf = vcf.combine(vcf_index)
-    if (!params.disable_bcftools_strip){
-      indexed_vcf = BCFTOOLS_STRIP(
+    indexed_vcf = vcf.combine(vcf_index).map{ v, i -> [["id": "TEST"], v, i]}
+
+    if (!asBool(params.disable_bcftools_strip)){
+      BCFTOOLS_STRIP(
         indexed_vcf,
-        annotate_vcf,
-        annotate_vcf_index
+        annotate_vcf.combine(annotate_vcf_index)
       )
+      indexed_vcf = BCFTOOLS_STRIP.out.annotated_vcf
     }
-    if (!params.disable_bcftools_norm) {
-      indexed_vcf = BCFTOOLS_NORM(
+
+    if (!asBool(params.disable_bcftools_norm)) {
+      BCFTOOLS_NORM(
         indexed_vcf,
         fasta
       )
+      indexed_vcf = BCFTOOLS_NORM.out.normed_vcf
     }
-    if (!params.disable_vep) {
-      indexed_vcf = ENSEMBLVEP_VEP(
+
+    if (!asBool(params.disable_vep)) {
+      ENSEMBLVEP_VEP(
         indexed_vcf,
         assembly,
         vep_species,
@@ -127,14 +166,32 @@ workflow {
         fasta,
         channel.value([])
       )
+      indexed_vcf = ENSEMBLVEP_VEP.out.annotated_vcf
     }
-    if (!params.disable_exomiser) {
-      exomiser_input_bundle = indexed_vcf.vcf.combine(
-        indexed_vcf.tbi).combine(phenoFile).combine(analysisFile)
 
-      cadd_bundle = caddVersion.combine(caddSnvFileName).combine(caddIndelFileName)
+    if (!asBool(params.disable_gnomad_anno)) {
+      ECHTVAR_ANNO(
+        indexed_vcf,
+        echtvar_zips
+      )
+      indexed_vcf = ECHTVAR_ANNO.out.annotated_vcf
+    }
+
+    if (!asBool(params.disable_compound_hets)) {
+      SLIVAR_EXPR(
+        indexed_vcf,
+        ped,
+        slivar_zips
+      )
+      SLIVAR_COMPOUND_HETS(
+        SLIVAR_EXPR.out.filtered_vcf,
+        ped
+      )
+    }
+
+    if (!asBool(params.disable_exomiser)) {
       EXOMISER(
-        exomiser_input_bundle,
+        indexed_vcf.combine(phenoFile).combine(analysisFile),
         datadir_file,
         datadir_name,
         exomiserGenome,
@@ -142,7 +199,7 @@ workflow {
         localFrequencyPath,
         localFrequencyIndexPath,
         remmVersion.combine(remmFileName),
-        cadd_bundle
+        caddVersion.combine(caddSnvFileName).combine(caddIndelFileName)
       )
     }
 }

@@ -7,52 +7,64 @@
   <a href="https://github.com/d3b-center/D3b-RADIANT-Annotation/blob/master/LICENSE"><img src="https://img.shields.io/github/license/d3b-center/D3b-RADIANT-Annotation.svg?style=for-the-badge"></a>
 </p>
 
-Simple workflow to reannotate Kids First VEPs to be compatible with the RADIANT framework.
-However, this can also be used to annotate/reannotate any other VCF as needed to ensure the following requirements are met:
- - Old annotations are stripped
+Workflow to add various transcript and site level annotations to a DNA germline VCF. The workflow has the following framework:
+ - Old annotations are stripped with bcftools
+ - VCF is annotated with bcftools
  - VCF is normalized
  - VCF is annotated with VEP
+ - VCF is annotated with Echtvar
+ - Slivar Compound Hets is run
  - Exomiser is run
-## Tools Run
- - `bcftools strip`: Uses `annotate` to remove existing VEP (`CSQ`) and gnomad 3.1.1 (`gnomad_3_1_1*`) annotations
- - `bcftools norm`: Uses `norm` to split (or join) mulit-allelics and normalize indels
- - `VEP`: Uses cache 111 and meets the following specific criteria:
-    ```
-    --canonical
-    --format vcf 
-    --hgvs 
-    --hgvsg 
-    --no_stats 
-    --numbers 
-    --offline 
-    --fields Allele,Consequence,IMPACT,SYMBOL,Feature_type,Gene,PICK,Feature,EXON,BIOTYPE,INTRON,HGVSc,HGVSp,STRAND,CDS_position,cDNA_position,Protein_position,Amino_acids,Codons,VARIANT_CLASS,HGVSg,CANONICAL,RefSeq,MANE,MANE_SELECT,MANE_PLUS 
-    --flag_pick 
-    --mane 
-    --mane_select 
-    --pick_order rank,biotype,mane_select,mane_plus_clinical,canonical,appris,tsl,ccds,length,ensembl,refseq 
-    --symbol 
-    --variant_class 
-    --vcf 
-    --xref_refseq 
-    --compress_output bgzip
-    --fasta Homo_sapiens_assembly38.fasta
-    --assembly GRCh38
-    --species homo_sapiens
-    --cache
-    --cache_version 111
-    ```
- - `exomiser`: "The Exomiser is a Java program that finds potential disease-causing variants from whole-exome or whole-genome sequencing data." See https://github.com/exomiser/Exomiser for more details
 
- ## Inputs
- What is "required" or not depends upon the input. The **Required** inputs are based on Kids First Processed VCFs. You may use the disable_(insert_step) flags to skip any step not needed based on the input.
- ### Required - Need to provide
- - `vcf`: KF VCF to process
- - `vcf_index` = Index of `vcf`
- - `output_basename`: String prefix of file outputs. Technically optional, but strongly recommended. Default is `TEST`
-#### VEP
- - `vep_cache`: VEP cache for annotation. Recommend 111, `homo_sapiens_vep_111_GRCh38.tar.gz` 
- - `fasta`: FASTA used during variant calling. Recommend `Homo_sapiens_assembly38.fasta`
-#### EXOMISER
+### Disabling Tools
+Any of the tools can be enabled/disabled using the following disable_(insert_step) parameters. The default workflow runs in the following configuration:
+- disable_bcftools_strip = false
+- disable_bcftools_norm = false
+- disable_vep = false
+- disable_gnomad_anno = false
+- disable_compound_hets = true
+- disable_exomiser = true
+
+While any step can be disabled, it might have adverse affects on downstream tools. For example, if you disable VEP but turn on Slivar compound hets, the program can fail if your input VCF does not have any ANN or CSQ INFO fields.
+Validation safeguards only exist for each step because we want to allow for scenarios where partially annotated VCFs can enter at any stage. This allows for faster reannotation in the future.
+
+## Inputs
+
+### Required - Need to provide
+As mentioned above requirements depend on what is enabled. At the minimum, three inputs are required.
+- `vcf`: KF VCF to process
+- `vcf_index` = Index of `vcf`
+- `output_basename`: String prefix of file outputs. Technically optional, but strongly recommended. Default is `TEST`
+
+#### BCFTOOLS STRIP ENABLED
+If you enable BCFTOOLS STRIP, at least one of the following must be provided:
+- `rm_fields_csv`
+- `annotate_vcf`
+- `bcftools_strip_extra_args`
+
+#### BCFTOOLS NORM ENABLED
+If you enable BCFTOOLS NORM, all of the following must be provided:
+- `fasta`
+
+#### VEP ENABLED
+If you enable VEP, all of the following must be provided:
+- `assembly`
+- `fasta`
+- `vep_cache`
+- `vep_cache_version`
+- `vep_species`
+
+#### ECHTVAR ENABLED
+If you enable ECHTVAR, all of the following must be provided:
+- `echtvar_zips`
+
+#### SLIVAR ENABLED
+If you enable SLIVAR, all of the following must be provided:
+- `ped`
+
+As mentioned above, Slivar does require some annotations. For more information see [our notes](./docs/slivar_compound_hets_notes.md).
+
+#### EXOMISER ENABLED
  - `analysis_file`: YAML with analysis options. See https://exomiser.readthedocs.io/en/latest/advanced_analysis.html#analysis. Recommend `default_exomiser_WGS_analysis.yml`
  - `datadir_file`: TAR GZ with referenece files. Example contents:
     ```
@@ -188,39 +200,58 @@ However, this can also be used to annotate/reannotate any other VCF as needed to
 
        ```
 
-### Required - Has defaults
-#### BCFTOOLS
-  - `rm_fields_csv`: List of existing annotation to remove. Default:
-    ```
-      INFO/CSQ,INFO/gnomad_3_1_1_AC,INFO/gnomad_3_1_1_AN,INFO/gnomad_3_1_1_AF,INFO/gnomad_3_1_1_nhomalt,INFO/gnomad_3_1_1_AC_popmax,INFO/gnomad_3_1_1_AN_popmax,INFO/gnomad_3_1_1_AF_popmax,INFO/gnomad_3_1_1_nhomalt_popmax,INFO/gnomad_3_1_1_AC_controls_and_biobanks,INFO/gnomad_3_1_1_AN_controls_and_biobanks,INFO/gnomad_3_1_1_AF_controls_and_biobanks,INFO/gnomad_3_1_1_AF_non_cancer,INFO/gnomad_3_1_1_primate_ai_score,INFO/gnomad_3_1_1_splice_ai_consequence,INFO/gnomad_3_1_1_FILTER,INFO/gnomad_3_1_1_AF_non_cancer_afr,INFO/gnomad_3_1_1_AF_non_cancer_ami,INFO/gnomad_3_1_1_AF_non_cancer_asj,INFO/gnomad_3_1_1_AF_non_cancer_eas,INFO/gnomad_3_1_1_AF_non_cancer_fin,INFO/gnomad_3_1_1_AF_non_cancer_mid,INFO/gnomad_3_1_1_AF_non_cancer_nfe,INFO/gnomad_3_1_1_AF_non_cancer_oth,INFO/gnomad_3_1_1_AF_non_cancer_raw,INFO/gnomad_3_1_1_AF_non_cancer_sas,INFO/gnomad_3_1_1_AF_non_cancer_amr,INFO/gnomad_3_1_1_AF_non_cancer_popmax,INFO/gnomad_3_1_1_AF_non_cancer_all_popmax
-    ```
-#### VEP
- - `assembly`: `GRCh38`
- - `vep_cache_version`: `111`
- - `vep_species`: `homo_sapiens`
- - `vep_cpus`: `32`
-#### EXOMISER
- - `datadir_name`: `data`
- - `cadd_indelname`: `gnomad.genomes.r4.0.indel.tsv.gz`
- - `cadd_snvname`: `whole_genome_SNVs.tsv.gz`
- - `cadd_version`: `1.7`
- - `exomiser_version`: `2406`
- - `exomiser_genome`: `hg38`
- - `exomiser_mem`: `16`
- - `remm_filename`: `ReMM.v0.4.hg38.tsv.gz`
- - `remm_version`: `v0.4`
+### Input Defaults and Run Configurations
 
-### Optional
-#### BCFTOOLS STRIP
- - `annotate_vcf`: VCF to use to add annotations using bcftools
- - `annotate_vcf_index`: Index of `annotate_vcf`
- - `annot_fields_csv`: CSV list of fields to use from `annotate_vcf` and/or list of fields to rename
- - `bcftools_strip_extra_args`: Extra args to add to the step. Consult tool manual if needed
-#### BCFTOOLS NORM
- - `check_ref`: For BCFTOOLS norm. Check REF alleles and exit (e), warn (w), exclude (x), or set (s) bad sites. Default is `w`
- - `multiallelics`: Split multiallelics (-) or join biallelics (+), type: snps|indels|both|any. Default is `-any`
-#### VEP
- -  `vep_buffer_size`: `100000`
-#### EXOMISER
- - `local_frequency`: custom frequency source file
- - `local_frequency_index`: Index of `local_frequency`
+All of the defaults can be found in params block of `nextflow.config`.
+Kids First specific run configurations can be found in `conf/kids_first.config`.
+
+#### Kids First Run Configuration
+Here's a snapshot of the run configuration for Kids First Germline data:
+- `bcftools strip` uses the `annotate` module to:
+  - remove existing VEP (`CSQ`) and gnomad 3.1.1 (`gnomad_3_1_1*`) annotations
+  - add annotations from `annotate_vcf`
+- `bcftools norm`: Uses `norm` to split (or join) mulit-allelics and normalize indels
+- `VEP` uses cache 105 and meets the following specific criteria:
+   ```
+   --allele_number
+   --allow_non_variant
+   --assembly GRCh38
+   --cache
+   --cache_version 105
+   --canonical
+   --ccds
+   --check_existing
+   --dir_cache ./
+   --domains
+   --dont_skip
+   --failed 1
+   --format vcf
+   --gene_phenotype
+   --hgvs
+   --hgvsg
+   --mane
+   --mane_select
+   --merged
+   --no_escape
+   --no_stats
+   --numbers
+   --offline
+   --pick_order rank,biotype,mane,canonical,appris,tsl,ccds,length,ensembl,refseq
+   --polyphen b
+   --protein
+   --pubmed
+   --regulatory
+   --shift_hgvs 1
+   --sift b
+   --species homo_sapiens
+   --symbol
+   --total_length
+   --tsl
+   --uniprot
+   --variant_class
+   --vcf
+   --xref_refseq
+   ```
+- `echtvar`: Used for fast gnomAD annotation from the `echtvar_zips` input (gnomad.v3.1.1.custom.echtvar.zip)
+- `slivar`: Used for rare variant discovery, primarily in joint family VCFs using the `expr` with the `slivar_zips` input (topmed.hg38.dbsnp.151.zip)  and `compount-hets` modules
+- `exomiser`: "The Exomiser is a Java program that finds potential disease-causing variants from whole-exome or whole-genome sequencing data." See https://github.com/exomiser/Exomiser for more details

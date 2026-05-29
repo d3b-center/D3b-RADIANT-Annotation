@@ -1,9 +1,9 @@
 process EXOMISER {
-
+    tag "${meta.id}"
     label 'C8_flex'
  
     input:
-    tuple path(vcfFile), path(indexFile), path(phenoFile), path(analysisFile)
+    tuple val(meta), path(vcfFile), path(indexFile), path(phenoFile), path(analysisFile)
     path datadir_tar
     val datadir_name // Name of the directory to be created after untarring the datadir_tar
     val exomiserGenome
@@ -22,8 +22,7 @@ process EXOMISER {
 
 
     output:
-    path("*vcf.gz")         , optional:true, emit: vcf
-    path("*vcf.gz.tbi")     , optional:true, emit: tbi
+    tuple val(meta), path("*vcf.gz"), path("*vcf.gz.tbi")         , optional:true, emit: vcf
     path("*html")           , optional:true, emit: html
     path("*json")           , optional:true, emit: json
     path("*genes.tsv")      , optional:true, emit: genetsv
@@ -68,7 +67,6 @@ process EXOMISER {
 
     // Note: specifying the extra options (args) at the beginning because output options are ignored when they are passed at the end.
     """
-    #!/bin/bash -eo pipefail
     tar xzf ${datadir_tar} && \\
     java -Xmx${avail_mem}M -cp \$( cat /app/jib-classpath-file ) \$( cat /app/jib-main-class-file ) \\
         --vcf ${vcfFile} \\
@@ -77,11 +75,11 @@ process EXOMISER {
         --sample ${phenoFile} \\
         --output-format=HTML,JSON,TSV_GENE,TSV_VARIANT,VCF \\
         --output-directory=/`pwd` \\
-        ${args} \\
+        $args \\
         --exomiser.data-directory=/`pwd`/${datadir_name} \\
-        ${localFrequencyFileArgs} \\
-        ${remmArgs} \\
-        ${caddArgs} \\
+        $localFrequencyFileArgs \\
+        $remmArgs \\
+        $caddArgs \\
         --exomiser.${exomiserGenome}.data-version="${exomiserDataVersion}" \\
         --exomiser.phenotype.data-version="${exomiserDataVersion}" \\
         ${applicationPropertiesArgs}
