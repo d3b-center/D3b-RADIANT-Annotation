@@ -143,7 +143,8 @@ workflow {
     if (!asBool(params.disable_bcftools_strip)){
       BCFTOOLS_STRIP(
         indexed_vcf,
-        annotate_vcf.combine(annotate_vcf_index)
+        annotate_vcf,
+        annotate_vcf_index
       )
       indexed_vcf = BCFTOOLS_STRIP.out.annotated_vcf
     }

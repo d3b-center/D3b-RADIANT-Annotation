@@ -43,7 +43,7 @@ process ENSEMBLVEP_VEP {
         --cache_version $cache_version \\
         --dir_cache $dir_cache \\
         --fork $task.cpus && \\
-        tabix ${prefix}.${file_extension}.gz
+    tabix ${prefix}.${file_extension}.gz
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
