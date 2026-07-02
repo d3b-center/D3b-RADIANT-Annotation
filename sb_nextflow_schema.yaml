@@ -389,17 +389,6 @@ inputs:
        - true
        - false
     doc: "Set to true to skip VEP step if VEP annotation has already been performed or is not needed"
--   id: check_existing
-    inputBinding:
-        prefix: --check_existing
-    type:
-    - 'null'
-    - name: truefalse
-      type: enum
-      symbols:
-       - true
-       - false
-    doc: "Turn on to enable check existing flag in VEP"
 -   id: vep_cache
     inputBinding:
         prefix: --vep_cache
@@ -442,13 +431,6 @@ inputs:
     - 'null'
     - int
     doc: Number of CPUs to allocate for VEP. Default is `32`. This is the max for this implementation, but you can specify fewer if needed.
--   id: vep_mem
-    inputBinding:
-        prefix: --vep_mem
-    type:
-    - 'null'
-    - int
-    doc: Memory to allocate for VEP in GB. Default is `64`.
 -   id: disable_echtvar_anno
     inputBinding:
         prefix: --disable_gnomad_anno
