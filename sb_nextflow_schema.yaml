@@ -434,13 +434,6 @@ inputs:
     - 'null'
     - int
     doc: Number of CPUs to allocate for VEP. Default is `32`. This is the max for this implementation, but you can specify fewer if needed.
--   id: vep_mem
-    inputBinding:
-        prefix: --vep_mem
-    type:
-    - 'null'
-    - int
-    doc: Memory to allocate for VEP in GB. Default is `64`.
 -   id: disable_echtvar_anno
     inputBinding:
         prefix: --disable_echtvar_anno

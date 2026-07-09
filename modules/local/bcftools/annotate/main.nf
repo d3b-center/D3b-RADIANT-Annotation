@@ -5,8 +5,7 @@ process BCFTOOLS_ANNOTATE {
     // basic annotation functionality. See https://samtools.github.io/bcftools/howtos/annotate.html
     input:
     tuple val(meta), path(vcf), path(vcf_index)
-    path(annotate_vcf)
-    path(annotate_vcf_index)
+    tuple path(annotate_vcf), path(annotate_vcf_index)
 
     output:
     tuple val(meta), path("*vcf.gz"), path("*vcf.gz.tbi"), emit: annotated_vcf
