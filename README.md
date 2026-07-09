@@ -18,7 +18,7 @@ Workflow to add various transcript and site level annotations to a DNA germline 
 
 ### Disabling Tools
 Any of the tools can be enabled/disabled using the following disable_(insert_step) parameters. The default workflow runs in the following configuration:
-- disable_bcftools_strip = false
+- disable_bcftools_strip_anno = false
 - disable_bcftools_norm = false
 - disable_vep = false
 - disable_echtvar_anno = false

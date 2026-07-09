@@ -46,7 +46,7 @@ doc: |
 
     ### Disabling Tools
     Any of the tools can be enabled/disabled using the following disable_(insert_step) parameters. The default workflow runs in the following configuration:
-    - disable_bcftools_strip = false
+    - disable_bcftools_strip_anno = false
     - disable_bcftools_norm = false
     - disable_vep = false
     - disable_echtvar_anno = false
@@ -333,7 +333,7 @@ inputs:
     - string
     doc: |
         Comma-separated list of fields to remove from the VCF. Default is to remove all existing VEP and gnomad 3.1.1 annotations.
-        If you want to keep all existing annotations, set `--disable_bcftools_strip` to true.
+        If you want to keep all existing annotations, set `--disable_bcftools_strip_anno` to true.
         NF Default is INFO/CSQ and INFO/gnomad_3_1_1_* enumerated
 -   id: bcftools_strip_extra_args
     type: 'string[]?'

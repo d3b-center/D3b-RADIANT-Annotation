@@ -32,7 +32,7 @@ def validate_params(param_obj) {
   requireWhenEnabled(
     param_obj,
     errors,
-    "disable_bcftools_strip",
+    "disable_bcftools_strip_anno",
     ["rm_fields_csv", "annotate_vcf", "bcftools_strip_extra_args"],
     "bcftools strip",
     "ANY"
@@ -69,7 +69,7 @@ def validate_params(param_obj) {
   requireWhenEnabled(
     param_obj,
     errors,
-    "disable_compound_hets",
+    "disable_slivar_compound_hets",
     ["ped"],
     "Slivar compound-hets"
   )
@@ -96,8 +96,8 @@ workflow {
     vcf = channel.fromPath(params.vcf)
     vcf_index = channel.fromPath(params.vcf_index)
     // bcftools
-    annotate_vcf = params.annotate_vcf ? channel.fromPath(params.annotate_vcf) : channel.value([])
-    annotate_vcf_index = params.annotate_vcf_index ? channel.fromPath(params.annotate_vcf_index) : channel.value([])
+    annotate_vcf = params.annotate_vcf ? channel.fromPath(params.annotate_vcf) : channel.empty()
+    annotate_vcf_index = params.annotate_vcf_index ? channel.fromPath(params.annotate_vcf_index) : channel.empty()
     // VEP
     vep_cache = channel.fromPath(params.vep_cache)
     vep_cache_version = params.vep_cache_version
@@ -135,10 +135,11 @@ workflow {
 
     indexed_vcf = vcf.combine(vcf_index).map{ v, i -> [["id": "TEST"], v, i]}
 
-    if (!params.disable_bcftools_strip){
+    if (!params.disable_bcftools_strip_anno){
       BCFTOOLS_STRIP(
         indexed_vcf,
-        annotate_vcf.combine(annotate_vcf_index)
+        annotate_vcf,
+        annotate_vcf_index
       )
       indexed_vcf = BCFTOOLS_STRIP.out.annotated_vcf
     }
@@ -172,7 +173,7 @@ workflow {
       indexed_vcf = ECHTVAR_ANNO.out.annotated_vcf
     }
 
-    if (!params.disable_compound_hets) {
+    if (!params.disable_slivar_compound_hets) {
       SLIVAR_EXPR(
         indexed_vcf,
         ped,
