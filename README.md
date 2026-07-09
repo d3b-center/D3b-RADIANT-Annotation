@@ -21,7 +21,7 @@ Any of the tools can be enabled/disabled using the following disable_(insert_ste
 - disable_bcftools_strip = false
 - disable_bcftools_norm = false
 - disable_vep = false
-- disable_gnomad_anno = false
+- disable_echtvar_anno = false
 - disable_compound_hets = true
 - disable_exomiser = true
 

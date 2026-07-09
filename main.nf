@@ -65,7 +65,7 @@ def validate_params(param_obj) {
   requireWhenEnabled(
     param_obj,
     errors,
-    "disable_gnomad_anno",
+    "disable_echtvar_anno",
     ["echtvar_zips"],
     "Echtvar anno"
   )
@@ -170,7 +170,7 @@ workflow {
       indexed_vcf = ENSEMBLVEP_VEP.out.annotated_vcf
     }
 
-    if (!asBool(params.disable_gnomad_anno)) {
+    if (!asBool(params.disable_echtvar_anno)) {
       ECHTVAR_ANNO(
         indexed_vcf,
         echtvar_zips

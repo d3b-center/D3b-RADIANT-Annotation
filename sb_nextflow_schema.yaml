@@ -43,7 +43,7 @@ doc: |
     - disable_bcftools_strip = false
     - disable_bcftools_norm = false
     - disable_vep = false
-    - disable_gnomad_anno = false
+    - disable_echtvar_anno = false
     - disable_compound_hets = true
     - disable_exomiser = true
 
@@ -441,7 +441,7 @@ inputs:
     doc: Memory to allocate for VEP in GB. Default is `64`.
 -   id: disable_echtvar_anno
     inputBinding:
-        prefix: --disable_gnomad_anno
+        prefix: --disable_echtvar_anno
     type:
     - 'null'
     - name: truefalse
@@ -449,7 +449,7 @@ inputs:
       symbols:
        - true
        - false
-    doc: "Set to true to skip gnomAD site-based annotaiton with echtvar. NF default is false"
+    doc: "Set to true to skip site-based annotation with echtvar. NF default is false"
 -   id: ectvar_gnomad_zip
     inputBinding:
         prefix: --echtvar_zips
@@ -604,18 +604,13 @@ inputs:
     sbg:suggestedValue: { class: File, path: 60639014357c3a53540ca7a3, name: Homo_sapiens_assembly38.fasta }
 
 outputs:
--   id: ENSEMBLVEP_VEP
-    label: ENSEMBLVEP_VEP
+-   id: ANNOTATED_VCF
+    label: ANNOTATED_VCF
     outputBinding:
-        glob: 'results/ENSEMBLVEP_VEP/*vcf.gz*'
+        glob: 'results/ANNOTATED_VCF/*vcf.gz*'
     type:
     - File
--   id: ECHTVAR
-    label: ECHTVAR
-    outputBinding:
-        glob: 'results/ECHTVAR/*vcf.gz*'
-    type:
-    - File?
+
 -   id: EXOMISER
     label: EXOMISER
     outputBinding:
