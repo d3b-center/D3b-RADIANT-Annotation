@@ -212,46 +212,55 @@ Here's a snapshot of the run configuration for Kids First Germline data:
   - add annotations from `annotate_vcf`
 - `bcftools norm`: Uses `norm` to split (or join) mulit-allelics and normalize indels
 - `VEP` uses cache 105 and meets the following specific criteria:
-   ```
-   --allele_number
-   --allow_non_variant
-   --assembly GRCh38
-   --cache
-   --cache_version 105
-   --canonical
-   --ccds
-   --check_existing
-   --dir_cache ./
-   --domains
-   --dont_skip
-   --failed 1
-   --format vcf
-   --gene_phenotype
-   --hgvs
-   --hgvsg
-   --mane
-   --mane_select
-   --merged
-   --no_escape
-   --no_stats
-   --numbers
-   --offline
-   --pick_order rank,biotype,mane,canonical,appris,tsl,ccds,length,ensembl,refseq
-   --polyphen b
-   --protein
-   --pubmed
-   --regulatory
-   --shift_hgvs 1
-   --sift b
-   --species homo_sapiens
-   --symbol
-   --total_length
-   --tsl
-   --uniprot
-   --variant_class
-   --vcf
-   --xref_refseq
-   ```
+    ```
+    --af_1kg
+    --af_esp
+    --af_gnomad
+    --allele_number
+    --allow_non_variant
+    --appris
+    --assembly GRCh38
+    --buffer_size 100000
+    --cache
+    --cache_version 105
+    --canonical
+    --ccds
+    --check_existing
+    --compress_output bgzip
+    --dir_cache ./
+    --domains
+    --dont_skip
+    --failed 1
+    --fasta Homo_sapiens_assembly38.fasta
+    --flag_pick
+    --format vcf
+    --gene_phenotype
+    --hgvs
+    --hgvsg
+    --mane
+    --mane_select
+    --merged
+    --no_escape
+    --no_stats
+    --numbers
+    --offline
+    --pick_order rank,biotype,mane,canonical,appris,tsl,ccds,length,ensembl,refseq
+    --polyphen b
+    --protein
+    --pubmed
+    --regulatory
+    --shift_hgvs 1
+    --sift b
+    --species homo_sapiens
+    --symbol
+    --total_length
+    --tsl
+    --uniprot
+    --variant_class
+    --vcf
+    --xref_refseq
+    ```
+
 - `echtvar`: Used for fast gnomAD annotation from the `echtvar_zips` input (gnomad.v3.1.1.custom.echtvar.zip)
 - `slivar`: Used for rare variant discovery, primarily in joint family VCFs using the `expr` with the `slivar_zips` input (topmed.hg38.dbsnp.151.zip)  and `compount-hets` modules
 - `exomiser`: "The Exomiser is a Java program that finds potential disease-causing variants from whole-exome or whole-genome sequencing data." See https://github.com/exomiser/Exomiser for more details
