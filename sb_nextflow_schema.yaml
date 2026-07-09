@@ -20,7 +20,8 @@ requirements:
           disable_bcftools_norm: inputs.disable_bcftools_norm ? inputs.disable_bcftools_norm : false,
           disable_vep: inputs.disable_vep ? inputs.disable_vep : false,
           disable_echtvar_anno: inputs.disable_echtvar_anno ? inputs.disable_echtvar_anno : false,
-          disable_slivar_compound_hets: inputs.disable_slivar_compound_hets ? inputs.disable_slivar_compound_hets : true
+          disable_slivar_compound_hets: inputs.disable_slivar_compound_hets ? inputs.disable_slivar_compound_hets : true,
+          sbg_run: true
           }
           ))
 
@@ -300,7 +301,7 @@ arguments:
 -   position: 0
     shellQuote: false
     valueFrom: >
-        -params-file input_params.json --sbg_run --outdir ./results
+        -params-file input_params.json --outdir ./results
 inputs:
 -   id: vcf
     inputBinding:
@@ -321,8 +322,6 @@ inputs:
     - string
     doc: String prefix of file outputs.
 -   id: disable_bcftools_strip_anno
-    inputBinding:
-        prefix: --disable_bcftools_strip
     type:
     - 'null'
     - boolean
@@ -361,8 +360,6 @@ inputs:
     - string
     doc: Optional. Comma-separated list of fields to use from `bcftools_annotate_vcf` and/or list of fields to rename.
 -   id: disable_bcftools_norm
-    inputBinding:
-        prefix: --disable_bcftools_norm
     type:
     - 'null'
     - boolean
@@ -386,8 +383,6 @@ inputs:
     - string
     doc: "Split multiallelics (-) or join biallelics (+), type: snps|indels|both|any. NF default is `-any`"
 -   id: disable_vep
-    inputBinding:
-        prefix: --disable_vep
     type:
     - 'null'
     - boolean
@@ -435,8 +430,6 @@ inputs:
     - int
     doc: Number of CPUs to allocate for VEP. Default is `32`. This is the max for this implementation, but you can specify fewer if needed.
 -   id: disable_echtvar_anno
-    inputBinding:
-        prefix: --disable_echtvar_anno
     type:
     - 'null'
     - boolean
@@ -450,8 +443,6 @@ inputs:
     doc: Echtvar-formated ZIP file containing gnomAD annotation information.
     sbg:suggestedValue: { class: File, path: 65c64d847dab7758206248c6, name: gnomad.v3.1.1.custom.echtvar.zip}
 -   id: disable_slivar_compound_hets
-    inputBinding:
-        prefix: --disable_compound_hets
     type:
     - 'null'
     - boolean
@@ -471,8 +462,6 @@ inputs:
     - File[]
     doc: Slivar-formated ZIP files containing additional annotations for performing Compound Hets analysis.
 -   id: disable_exomiser
-    inputBinding:
-        prefix: --disable_exomiser
     type:
     - 'null'
     - boolean
