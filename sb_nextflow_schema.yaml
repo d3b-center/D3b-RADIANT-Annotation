@@ -266,7 +266,6 @@ doc: |
     --hgvs
     --hgvsg
     --mane
-    --mane_select
     --merged
     --no_escape
     --no_stats

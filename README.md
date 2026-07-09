@@ -238,7 +238,6 @@ Here's a snapshot of the run configuration for Kids First Germline data:
     --hgvs
     --hgvsg
     --mane
-    --mane_select
     --merged
     --no_escape
     --no_stats
