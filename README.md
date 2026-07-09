@@ -22,7 +22,7 @@ Any of the tools can be enabled/disabled using the following disable_(insert_ste
 - disable_bcftools_norm = false
 - disable_vep = false
 - disable_echtvar_anno = false
-- disable_compound_hets = true
+- disable_slivar_compound_hets = true
 - disable_exomiser = true
 
 While any step can be disabled, it might have adverse affects on downstream tools. For example, if you disable VEP but turn on Slivar compound hets, the program can fail if your input VCF does not have any ANN or CSQ INFO fields.

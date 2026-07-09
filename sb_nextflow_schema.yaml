@@ -15,7 +15,12 @@ requirements:
           $(JSON.stringify(
           {
           multiallelics: inputs.multiallelics ? inputs.multiallelics : "-any",
-          bcftools_strip_extra_args: inputs.bcftools_strip_extra_args ? inputs.bcftools_strip_extra_args : ""
+          bcftools_strip_extra_args: inputs.bcftools_strip_extra_args ? inputs.bcftools_strip_extra_args : "",
+          disable_bcftools_strip_anno: inputs.disable_bcftools_strip_anno ? inputs.disable_bcftools_strip_anno : false,
+          disable_bcftools_norm: inputs.disable_bcftools_norm ? inputs.disable_bcftools_norm : false,
+          disable_vep: inputs.disable_vep ? inputs.disable_vep : false,
+          disable_echtvar_anno: inputs.disable_echtvar_anno ? inputs.disable_echtvar_anno : false,
+          disable_slivar_compound_hets: inputs.disable_slivar_compound_hets ? inputs.disable_slivar_compound_hets : true
           }
           ))
 
@@ -44,7 +49,7 @@ doc: |
     - disable_bcftools_norm = false
     - disable_vep = false
     - disable_echtvar_anno = false
-    - disable_compound_hets = true
+    - disable_slivar_compound_hets = true
     - disable_exomiser = true
 
     While any step can be disabled, it might have adverse affects on downstream tools. For example, if you disable VEP but turn on Slivar compound hets, the program can fail if your input VCF does not have any ANN or CSQ INFO fields.
@@ -295,7 +300,7 @@ arguments:
 -   position: 0
     shellQuote: false
     valueFrom: >
-        -params-file input_params.json --sbg_run True --outdir ./results
+        -params-file input_params.json --sbg_run --outdir ./results
 inputs:
 -   id: vcf
     inputBinding:
@@ -320,11 +325,7 @@ inputs:
         prefix: --disable_bcftools_strip
     type:
     - 'null'
-    - name: truefalse
-      type: enum
-      symbols:
-       - true
-       - false
+    - boolean
     doc: "Set to true to skip BCFTOOLS strip/anno step and keep all existing annotations in VCF. NF default is false"
 -   id: bcftools_strip_rm_fields_csv
     inputBinding:
@@ -364,11 +365,7 @@ inputs:
         prefix: --disable_bcftools_norm
     type:
     - 'null'
-    - name: truefalse
-      type: enum
-      symbols:
-       - true
-       - false
+    - boolean
     doc: "Set to true to skip BCFTOOLS norm step if normalization has already ben performed or is not needed. NF default is false. Set to true previously annotated KF VCFs"
 -   id: bcftools_norm_check_ref
     inputBinding:
@@ -393,11 +390,7 @@ inputs:
         prefix: --disable_vep
     type:
     - 'null'
-    - name: truefalse
-      type: enum
-      symbols:
-       - true
-       - false
+    - boolean
     doc: "Set to true to skip VEP step if VEP annotation has already been performed or is not needed. NF default is false"
 -   id: vep_cache
     inputBinding:
@@ -453,11 +446,7 @@ inputs:
         prefix: --disable_echtvar_anno
     type:
     - 'null'
-    - name: truefalse
-      type: enum
-      symbols:
-       - true
-       - false
+    - boolean
     doc: "Set to true to skip site-based annotation with echtvar. NF default is false"
 -   id: ectvar_gnomad_zip
     inputBinding:
@@ -472,11 +461,7 @@ inputs:
         prefix: --disable_compound_hets
     type:
     - 'null'
-    - name: truefalse
-      type: enum
-      symbols:
-       - true
-       - false
+    - boolean
     doc: "Set to true to skip Slivar compound-hets analysis. Compound hets requires the following INFO field annoations: gnomad_3_1_1_AF_popmax, gnomad_3_1_1_nhomalt, topmed_af, and one of ANN, CSQ, or BCSQ. Experimental: disabled by default."
 -   id: slivar_compound_hets_ped
     inputBinding:
@@ -497,11 +482,7 @@ inputs:
         prefix: --disable_exomiser
     type:
     - 'null'
-    - name: truefalse
-      type: enum
-      symbols:
-       - true
-       - false
+    - boolean
     doc: "Set to true to skip EXOMISER step if EXOMISER annotation has already been performed or is not needed. Disabled by default."
 -   id: exomiser_analysis_file
     inputBinding:
