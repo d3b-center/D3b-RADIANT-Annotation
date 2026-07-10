@@ -16,12 +16,12 @@ requirements:
           {
           multiallelics: inputs.multiallelics ? inputs.multiallelics : "-any",
           bcftools_strip_extra_args: inputs.bcftools_strip_extra_args ? inputs.bcftools_strip_extra_args : "",
-          disable_bcftools_strip_anno: inputs.disable_bcftools_strip_anno ? inputs.disable_bcftools_strip_anno : false,
-          disable_bcftools_norm: inputs.disable_bcftools_norm ? inputs.disable_bcftools_norm : false,
-          disable_vep: inputs.disable_vep ? inputs.disable_vep : false,
-          disable_echtvar_anno: inputs.disable_echtvar_anno ? inputs.disable_echtvar_anno : false,
-          disable_exomiser: inputs.disable_exomiser ? inputs.disable_exomiser : true,
-          disable_slivar_compound_hets: inputs.disable_slivar_compound_hets ? inputs.disable_slivar_compound_hets : true,
+          disable_bcftools_strip_anno: inputs.disable_bcftools_strip_anno !== null? inputs.disable_bcftools_strip_anno : false,
+          disable_bcftools_norm: inputs.disable_bcftools_norm !== null ? inputs.disable_bcftools_norm : false,
+          disable_vep: inputs.disable_vep !== null ? inputs.disable_vep : false,
+          disable_echtvar_anno: inputs.disable_echtvar_anno !== null ? inputs.disable_echtvar_anno : false,
+          disable_exomiser: inputs.disable_exomiser !== null ? inputs.disable_exomiser : true,
+          disable_slivar_compound_hets: inputs.disable_slivar_compound_hets !== null ? inputs.disable_slivar_compound_hets : true,
           sbg_run: true
           }
           ))
