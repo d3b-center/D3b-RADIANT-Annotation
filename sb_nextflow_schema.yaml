@@ -15,7 +15,13 @@ requirements:
           $(JSON.stringify(
           {
           multiallelics: inputs.multiallelics ? inputs.multiallelics : "-any",
-          bcftools_strip_extra_args: inputs.bcftools_strip_extra_args ? inputs.bcftools_strip_extra_args : ""
+          bcftools_strip_extra_args: inputs.bcftools_strip_extra_args ? inputs.bcftools_strip_extra_args : "",
+          disable_bcftools_strip_anno: inputs.disable_bcftools_strip_anno ? inputs.disable_bcftools_strip_anno : false,
+          disable_bcftools_norm: inputs.disable_bcftools_norm ? inputs.disable_bcftools_norm : false,
+          disable_vep: inputs.disable_vep ? inputs.disable_vep : false,
+          disable_echtvar_anno: inputs.disable_echtvar_anno ? inputs.disable_echtvar_anno : false,
+          disable_slivar_compound_hets: inputs.disable_slivar_compound_hets ? inputs.disable_slivar_compound_hets : true,
+          sbg_run: true
           }
           ))
 
@@ -23,28 +29,28 @@ doc: |
     # D3b RADIANT Annotation
 
     <p align="center">
-      <img src="docs/logo/d3b-inline-white.svg" alt="D3b repository logo" width="660px" />
+    <img src="docs/logo/d3b-inline-white.svg" alt="D3b repository logo" width="660px" />
     </p>
     <p align="center">
-      <a href="https://github.com/d3b-center/D3b-RADIANT-Annotation/blob/master/LICENSE"><img src="https://img.shields.io/github/license/d3b-center/D3b-RADIANT-Annotation.svg?style=for-the-badge"></a>
+    <a href="https://github.com/d3b-center/D3b-RADIANT-Annotation/blob/master/LICENSE"><img src="https://img.shields.io/github/license/d3b-center/D3b-RADIANT-Annotation.svg?style=for-the-badge"></a>
     </p>
 
     Workflow to add various transcript and site level annotations to a DNA germline VCF. The workflow has the following framework:
-     - Old annotations are stripped with bcftools
-     - VCF is annotated with bcftools
-     - VCF is normalized
-     - VCF is annotated with VEP
-     - VCF is annotated with Echtvar
-     - Slivar Compound Hets is run
-     - Exomiser is run
+    - Old annotations are stripped with bcftools
+    - VCF is annotated with bcftools
+    - VCF is normalized
+    - VCF is annotated with VEP
+    - VCF is annotated with Echtvar
+    - Slivar Compound Hets is run
+    - Exomiser is run
 
     ### Disabling Tools
     Any of the tools can be enabled/disabled using the following disable_(insert_step) parameters. The default workflow runs in the following configuration:
-    - disable_bcftools_strip = false
+    - disable_bcftools_strip_anno = false
     - disable_bcftools_norm = false
     - disable_vep = false
-    - disable_gnomad_anno = false
-    - disable_compound_hets = true
+    - disable_echtvar_anno = false
+    - disable_slivar_compound_hets = true
     - disable_exomiser = true
 
     While any step can be disabled, it might have adverse affects on downstream tools. For example, if you disable VEP but turn on Slivar compound hets, the program can fail if your input VCF does not have any ANN or CSQ INFO fields.
@@ -87,8 +93,8 @@ doc: |
     As mentioned above, Slivar does require some annotations. For more information see [our notes](./docs/slivar_compound_hets_notes.md).
 
     #### EXOMISER ENABLED
-     - `analysis_file`: YAML with analysis options. See https://exomiser.readthedocs.io/en/latest/advanced_analysis.html#analysis. Recommend `default_exomiser_WGS_analysis.yml`
-     - `datadir_file`: TAR GZ with referenece files. Example contents:
+    - `analysis_file`: YAML with analysis options. See https://exomiser.readthedocs.io/en/latest/advanced_analysis.html#analysis. Recommend `default_exomiser_WGS_analysis.yml`
+    - `datadir_file`: TAR GZ with referenece files. Example contents:
         ```
         data/
         data/remm/
@@ -157,9 +163,9 @@ doc: |
         data/2406_phenotype/phenix/ALL_SOURCES_ALL_FREQUENCIES_genes_to_phenotype.txt
         data/2406_phenotype/hp.obo
         ```
-     - `pheno_file`: YAML file with sample information
+    - `pheno_file`: YAML file with sample information
         - Individual example:
-          ```yaml
+        ```yaml
             ---
             id: FM_ZCF17CPC
             proband:
@@ -185,9 +191,9 @@ doc: |
                 namespacePrefix: HP
                 iriPrefix: 'http://purl.obolibrary.org/obo/HP_'
             phenopacketSchemaVersion: 2.0
-          ```
+        ```
         - Family example:
-           ```yaml
+        ```yaml
             ---
             id: FM_ASMHHE2N
             proband:
@@ -220,7 +226,7 @@ doc: |
                 iriPrefix: 'http://purl.obolibrary.org/obo/HP_'
             phenopacketSchemaVersion: 2.0
 
-           ```
+        ```
 
     ### Input Defaults and Run Configurations
 
@@ -230,53 +236,61 @@ doc: |
     #### Kids First Run Configuration
     Here's a snapshot of the run configuration for Kids First Germline data:
     - `bcftools strip` uses the `annotate` module to:
-      - remove existing VEP (`CSQ`) and gnomad 3.1.1 (`gnomad_3_1_1*`) annotations
-      - add annotations from `annotate_vcf`
+    - remove existing VEP (`CSQ`) and gnomad 3.1.1 (`gnomad_3_1_1*`) annotations
+    - add annotations from `annotate_vcf`
     - `bcftools norm`: Uses `norm` to split (or join) mulit-allelics and normalize indels
     - `VEP` uses cache 105 and meets the following specific criteria:
-       ```
-       --allele_number
-       --allow_non_variant
-       --assembly GRCh38
-       --cache
-       --cache_version 105
-       --canonical
-       --ccds
-       --check_existing
-       --dir_cache ./
-       --domains
-       --dont_skip
-       --failed 1
-       --format vcf
-       --gene_phenotype
-       --hgvs
-       --hgvsg
-       --mane
-       --mane_select
-       --merged
-       --no_escape
-       --no_stats
-       --numbers
-       --offline
-       --pick_order rank,biotype,mane,canonical,appris,tsl,ccds,length,ensembl,refseq
-       --polyphen b
-       --protein
-       --pubmed
-       --regulatory
-       --shift_hgvs 1
-       --sift b
-       --species homo_sapiens
-       --symbol
-       --total_length
-       --tsl
-       --uniprot
-       --variant_class
-       --vcf
-       --xref_refseq
-       ```
+    ```
+    --af_1kg
+    --af_esp
+    --af_gnomad
+    --allele_number
+    --allow_non_variant
+    --appris
+    --assembly GRCh38
+    --buffer_size 100000
+    --cache
+    --cache_version 105
+    --canonical
+    --ccds
+    --check_existing
+    --compress_output bgzip
+    --dir_cache ./
+    --domains
+    --dont_skip
+    --failed 1
+    --fasta Homo_sapiens_assembly38.fasta
+    --flag_pick
+    --format vcf
+    --gene_phenotype
+    --hgvs
+    --hgvsg
+    --mane
+    --merged
+    --no_escape
+    --no_stats
+    --numbers
+    --offline
+    --pick_order rank,biotype,mane,canonical,appris,tsl,ccds,length,ensembl,refseq
+    --polyphen b
+    --protein
+    --pubmed
+    --regulatory
+    --shift_hgvs 1
+    --sift b
+    --species homo_sapiens
+    --symbol
+    --total_length
+    --tsl
+    --uniprot
+    --variant_class
+    --vcf
+    --xref_refseq
+    ```
     - `echtvar`: Used for fast gnomAD annotation from the `echtvar_zips` input (gnomad.v3.1.1.custom.echtvar.zip)
     - `slivar`: Used for rare variant discovery, primarily in joint family VCFs using the `expr` with the `slivar_zips` input (topmed.hg38.dbsnp.151.zip)  and `compount-hets` modules
     - `exomiser`: "The Exomiser is a Java program that finds potential disease-causing variants from whole-exome or whole-genome sequencing data." See https://github.com/exomiser/Exomiser for more details
+
 hints:
 -   class: sbg:NextflowExecutionMode
     value: multi-instance
@@ -286,7 +300,7 @@ arguments:
 -   position: 0
     shellQuote: false
     valueFrom: >
-        -params-file input_params.json --sbg_run True --outdir ./results
+        -params-file input_params.json --outdir ./results
 inputs:
 -   id: vcf
     inputBinding:
@@ -307,16 +321,10 @@ inputs:
     - string
     doc: String prefix of file outputs.
 -   id: disable_bcftools_strip_anno
-    inputBinding:
-        prefix: --disable_bcftools_strip
     type:
     - 'null'
-    - name: truefalse
-      type: enum
-      symbols:
-       - true
-       - false
-    doc: "Set to true to skip BCFTOOLS strip/anno step and keep all existing annotations in VCF"
+    - boolean
+    doc: "Set to true to skip BCFTOOLS strip/anno step and keep all existing annotations in VCF. NF default is false"
 -   id: bcftools_strip_rm_fields_csv
     inputBinding:
         prefix: --rm_fields_csv
@@ -325,7 +333,8 @@ inputs:
     - string
     doc: |
         Comma-separated list of fields to remove from the VCF. Default is to remove all existing VEP and gnomad 3.1.1 annotations.
-        If you want to keep all existing annotations, set `--disable_bcftools_strip` to true.
+        If you want to keep all existing annotations, set `--disable_bcftools_strip_anno` to true.
+        NF Default is INFO/CSQ and INFO/gnomad_3_1_1_* enumerated
 -   id: bcftools_strip_extra_args
     type: 'string[]?'
     doc: Extra arguments to pass to bcftools strip command
@@ -350,16 +359,10 @@ inputs:
     - string
     doc: Optional. Comma-separated list of fields to use from `bcftools_annotate_vcf` and/or list of fields to rename.
 -   id: disable_bcftools_norm
-    inputBinding:
-        prefix: --disable_bcftools_norm
     type:
     - 'null'
-    - name: truefalse
-      type: enum
-      symbols:
-       - true
-       - false
-    doc: "Set to true to skip BCFTOOLS norm step if normalization has already ben performed or is not needed. DEFAULT IS TRUE for KF VCFs"
+    - boolean
+    doc: "Set to true to skip BCFTOOLS norm step if normalization has already ben performed or is not needed. NF default is false. Set to true previously annotated KF VCFs"
 -   id: bcftools_norm_check_ref
     inputBinding:
         prefix: --check_ref
@@ -372,23 +375,17 @@ inputs:
        - w
        - x
        - s
-    doc: For BCFTOOLS norm. Check REF alleles and exit (e), warn (w), exclude (x), or set (s) bad sites
+    doc: For BCFTOOLS norm. Check REF alleles and exit (e), warn (w), exclude (x), or set (s) bad sites. NF default is `w`.
 -   id: bcftools_norm_multiallelics
     type:
     - 'null'
     - string
-    doc: "Split multiallelics (-) or join biallelics (+), type: snps|indels|both|any"
+    doc: "Split multiallelics (-) or join biallelics (+), type: snps|indels|both|any. NF default is `-any`"
 -   id: disable_vep
-    inputBinding:
-        prefix: --disable_vep
     type:
     - 'null'
-    - name: truefalse
-      type: enum
-      symbols:
-       - true
-       - false
-    doc: "Set to true to skip VEP step if VEP annotation has already been performed or is not needed"
+    - boolean
+    doc: "Set to true to skip VEP step if VEP annotation has already been performed or is not needed. NF default is false"
 -   id: vep_cache
     inputBinding:
         prefix: --vep_cache
@@ -423,7 +420,7 @@ inputs:
     type:
     - 'null'
     - int
-    doc: VEP buffer size. Adjust for memory usage as needed
+    doc: VEP buffer size. Adjust for memory usage as needed. NF default is 100000
 -   id: vep_cpu
     inputBinding:
         prefix: --vep_cpu
@@ -432,16 +429,10 @@ inputs:
     - int
     doc: Number of CPUs to allocate for VEP. Default is `32`. This is the max for this implementation, but you can specify fewer if needed.
 -   id: disable_echtvar_anno
-    inputBinding:
-        prefix: --disable_gnomad_anno
     type:
     - 'null'
-    - name: truefalse
-      type: enum
-      symbols:
-       - true
-       - false
-    doc: "Set to true to skip gnomAD site-based annotaiton with echtvar"
+    - boolean
+    doc: "Set to true to skip site-based annotation with echtvar. NF default is false"
 -   id: ectvar_gnomad_zip
     inputBinding:
         prefix: --echtvar_zips
@@ -451,15 +442,9 @@ inputs:
     doc: Echtvar-formated ZIP file containing gnomAD annotation information.
     sbg:suggestedValue: { class: File, path: 65c64d847dab7758206248c6, name: gnomad.v3.1.1.custom.echtvar.zip}
 -   id: disable_slivar_compound_hets
-    inputBinding:
-        prefix: --disable_compound_hets
     type:
     - 'null'
-    - name: truefalse
-      type: enum
-      symbols:
-       - true
-       - false
+    - boolean
     doc: "Set to true to skip Slivar compound-hets analysis. Compound hets requires the following INFO field annoations: gnomad_3_1_1_AF_popmax, gnomad_3_1_1_nhomalt, topmed_af, and one of ANN, CSQ, or BCSQ. Experimental: disabled by default."
 -   id: slivar_compound_hets_ped
     inputBinding:
@@ -476,15 +461,9 @@ inputs:
     - File[]
     doc: Slivar-formated ZIP files containing additional annotations for performing Compound Hets analysis.
 -   id: disable_exomiser
-    inputBinding:
-        prefix: --disable_exomiser
     type:
     - 'null'
-    - name: truefalse
-      type: enum
-      symbols:
-       - true
-       - false
+    - boolean
     doc: "Set to true to skip EXOMISER step if EXOMISER annotation has already been performed or is not needed. Disabled by default."
 -   id: exomiser_analysis_file
     inputBinding:
@@ -596,18 +575,13 @@ inputs:
     sbg:suggestedValue: { class: File, path: 60639014357c3a53540ca7a3, name: Homo_sapiens_assembly38.fasta }
 
 outputs:
--   id: ENSEMBLVEP_VEP
-    label: ENSEMBLVEP_VEP
+-   id: ANNOTATED_VCF
+    label: ANNOTATED_VCF
     outputBinding:
-        glob: 'results/ENSEMBLVEP_VEP/*vcf.gz*'
+        glob: 'results/ANNOTATED_VCF/*vcf.gz*'
     type:
     - File
--   id: ECHTVAR
-    label: ECHTVAR
-    outputBinding:
-        glob: 'results/ECHTVAR/*vcf.gz*'
-    type:
-    - File?
+
 -   id: EXOMISER
     label: EXOMISER
     outputBinding:

@@ -9,14 +9,9 @@ include { SLIVAR_EXPR } from './modules/local/slivar/expr/main'
 include { SLIVAR_COMPOUND_HETS } from './modules/local/slivar/compound-hets/main'
 include { EXOMISER } from './modules/local/exomiser/main'
 
-def asBool(v) {
-  if (v instanceof Boolean) return v
-  if (v == null) return false
-  return v.toString().toLowerCase() == 'true'
-}
 
 def requireWhenEnabled(param_obj, errors, disabled_flag, required, tool_name, mode = 'ALL') {
-  if (!asBool(param_obj[disabled_flag])) {
+  if (!param_obj[disabled_flag]) {
 
     def present = required.findAll { param_obj[it] }
 
@@ -37,7 +32,7 @@ def validate_params(param_obj) {
   requireWhenEnabled(
     param_obj,
     errors,
-    "disable_bcftools_strip",
+    "disable_bcftools_strip_anno",
     ["rm_fields_csv", "annotate_vcf", "bcftools_strip_extra_args"],
     "bcftools strip",
     "ANY"
@@ -65,7 +60,7 @@ def validate_params(param_obj) {
   requireWhenEnabled(
     param_obj,
     errors,
-    "disable_gnomad_anno",
+    "disable_echtvar_anno",
     ["echtvar_zips"],
     "Echtvar anno"
   )
@@ -74,7 +69,7 @@ def validate_params(param_obj) {
   requireWhenEnabled(
     param_obj,
     errors,
-    "disable_compound_hets",
+    "disable_slivar_compound_hets",
     ["ped"],
     "Slivar compound-hets"
   )
@@ -130,7 +125,7 @@ workflow {
     caddIndelFileName = params.cadd_indelname ? channel.value(params.cadd_indelname) : channel.value("")
 
     // CAVATICA DEBUG
-    if (asBool(params.sbg_run)){
+    if (params.sbg_run){
       def path = file("input_params.json", checkIfExists: true)
       if (path){
         log.info("SBG custom param inputs:")
@@ -140,15 +135,16 @@ workflow {
 
     indexed_vcf = vcf.combine(vcf_index).map{ v, i -> [["id": "TEST"], v, i]}
 
-    if (!asBool(params.disable_bcftools_strip)){
+    if (!params.disable_bcftools_strip_anno){
       BCFTOOLS_STRIP(
         indexed_vcf,
-        annotate_vcf.combine(annotate_vcf_index)
+        annotate_vcf,
+        annotate_vcf_index
       )
       indexed_vcf = BCFTOOLS_STRIP.out.annotated_vcf
     }
 
-    if (!asBool(params.disable_bcftools_norm)) {
+    if (!params.disable_bcftools_norm) {
       BCFTOOLS_NORM(
         indexed_vcf,
         fasta
@@ -156,7 +152,7 @@ workflow {
       indexed_vcf = BCFTOOLS_NORM.out.normed_vcf
     }
 
-    if (!asBool(params.disable_vep)) {
+    if (!params.disable_vep) {
       ENSEMBLVEP_VEP(
         indexed_vcf,
         assembly,
@@ -169,7 +165,7 @@ workflow {
       indexed_vcf = ENSEMBLVEP_VEP.out.annotated_vcf
     }
 
-    if (!asBool(params.disable_gnomad_anno)) {
+    if (!params.disable_echtvar_anno) {
       ECHTVAR_ANNO(
         indexed_vcf,
         echtvar_zips
@@ -177,7 +173,7 @@ workflow {
       indexed_vcf = ECHTVAR_ANNO.out.annotated_vcf
     }
 
-    if (!asBool(params.disable_compound_hets)) {
+    if (!params.disable_slivar_compound_hets) {
       SLIVAR_EXPR(
         indexed_vcf,
         ped,
@@ -189,7 +185,7 @@ workflow {
       )
     }
 
-    if (!asBool(params.disable_exomiser)) {
+    if (!params.disable_exomiser) {
       EXOMISER(
         indexed_vcf.combine(phenoFile).combine(analysisFile),
         datadir_file,
