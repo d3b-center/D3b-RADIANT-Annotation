@@ -20,6 +20,7 @@ requirements:
           disable_bcftools_norm: inputs.disable_bcftools_norm ? inputs.disable_bcftools_norm : false,
           disable_vep: inputs.disable_vep ? inputs.disable_vep : false,
           disable_echtvar_anno: inputs.disable_echtvar_anno ? inputs.disable_echtvar_anno : false,
+          disable_exomiser: inputs.disable_exomiser ? inputs.disable_exomiser : true,
           disable_slivar_compound_hets: inputs.disable_slivar_compound_hets ? inputs.disable_slivar_compound_hets : true,
           sbg_run: true
           }
@@ -94,7 +95,7 @@ doc: |
 
     #### EXOMISER ENABLED
     - `analysis_file`: YAML with analysis options. See https://exomiser.readthedocs.io/en/latest/advanced_analysis.html#analysis. Recommend `default_exomiser_WGS_analysis.yml`
-    - `datadir_file`: TAR GZ with referenece files. Example contents:
+    - `datadir_file`: TAR GZ with reference files. Example contents:
         ```
         data/
         data/remm/
@@ -433,7 +434,7 @@ inputs:
     - 'null'
     - boolean
     doc: "Set to true to skip site-based annotation with echtvar. NF default is false"
--   id: ectvar_gnomad_zip
+-   id: echtvar_zips
     inputBinding:
         prefix: --echtvar_zips
     type:

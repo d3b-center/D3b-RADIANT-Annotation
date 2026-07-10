@@ -66,7 +66,7 @@ As mentioned above, Slivar does require some annotations. For more information s
 
 #### EXOMISER ENABLED
  - `analysis_file`: YAML with analysis options. See https://exomiser.readthedocs.io/en/latest/advanced_analysis.html#analysis. Recommend `default_exomiser_WGS_analysis.yml`
- - `datadir_file`: TAR GZ with referenece files. Example contents:
+ - `datadir_file`: TAR GZ with reference files. Example contents:
     ```
     data/
     data/remm/

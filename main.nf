@@ -2,12 +2,12 @@
 
 include { BCFTOOLS_ANNOTATE as BCFTOOLS_STRIP } from './modules/local/bcftools/annotate/main'
 include { BCFTOOLS_NORM } from './modules/local/bcftools/norm/main'
-include { UNTAR as UNTAR_EXOMISER } from './modules/local/tar/main'
 include { ENSEMBLVEP_VEP } from './modules/local/ensemblvep/vep/main'
 include { ECHTVAR_ANNO } from './modules/local/echtvar/anno/main'
 include { SLIVAR_EXPR } from './modules/local/slivar/expr/main'
 include { SLIVAR_COMPOUND_HETS } from './modules/local/slivar/compound-hets/main'
 include { EXOMISER } from './modules/local/exomiser/main'
+include { paramsSummaryLog } from 'plugin/nf-schema'
 
 
 def requireWhenEnabled(param_obj, errors, disabled_flag, required, tool_name, mode = 'ALL') {
@@ -131,6 +131,7 @@ workflow {
         log.info("SBG custom param inputs:")
         log.info(path.text)
       }
+      log.info paramsSummaryLog(workflow)
     }
 
     indexed_vcf = vcf.combine(vcf_index).map{ v, i -> [["id": "TEST"], v, i]}
