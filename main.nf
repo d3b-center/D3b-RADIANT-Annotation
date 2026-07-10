@@ -96,8 +96,8 @@ workflow {
     vcf = channel.fromPath(params.vcf)
     vcf_index = channel.fromPath(params.vcf_index)
     // bcftools
-    annotate_vcf = params.annotate_vcf ? channel.fromPath(params.annotate_vcf) : channel.empty()
-    annotate_vcf_index = params.annotate_vcf_index ? channel.fromPath(params.annotate_vcf_index) : channel.empty()
+    annotate_vcf = params.annotate_vcf ? channel.fromPath(params.annotate_vcf) : channel.value([])
+    annotate_vcf_index = params.annotate_vcf_index ? channel.fromPath(params.annotate_vcf_index) : channel.value([])
     // VEP
     vep_cache = channel.fromPath(params.vep_cache)
     vep_cache_version = params.vep_cache_version
