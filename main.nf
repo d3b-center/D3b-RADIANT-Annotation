@@ -84,6 +84,7 @@ def validate_params(param_obj) {
 
   if (errors) {
     log.error(errors.join("\n"))
+    error("Parameter validation failed. Did you miss an input or forget to disable a tool?")
   }
 }
 

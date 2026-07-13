@@ -574,6 +574,13 @@ inputs:
     type:
     - File
     sbg:suggestedValue: { class: File, path: 60639014357c3a53540ca7a3, name: Homo_sapiens_assembly38.fasta }
+-   id: override_suffix
+    inputtBinding:
+        prefix: --override_suffix
+    type:
+    - 'null'
+    - string
+    doc: "For ANNOTATED_VCF output files only, give a string here to override the tool suffix after output basename and before .vcf.gz"
 
 outputs:
 -   id: ANNOTATED_VCF
