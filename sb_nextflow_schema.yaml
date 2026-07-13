@@ -581,7 +581,7 @@ inputs:
     type:
     - 'null'
     - string
-    doc: "For ANNOTATED_VCF output files only, give a string here to override the tool suffix after output basename and before .vcf.gz"
+    doc: "For ANNOTATED_VCF output files only, give a string here to override the tool suffix after output basename and before .vcf.gz Normally the output name is `params.output_basename` + `tool-contributed string` + `vcf.gz[.tbi]` which becomes: `params.output_basename` + `params.override_suffix` + `vcf.gz[.tbi]`"
 
 outputs:
 -   id: ANNOTATED_VCF
