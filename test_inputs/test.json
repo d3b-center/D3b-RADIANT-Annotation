@@ -9,6 +9,6 @@
     "vep_mem": 30,
     "disable_bcftools_norm": true,
     "aws_test_instance": true,
-    "disable_echtvar_anno": true,
-    "override_suffix": ".big_fancy_text"
+    "echtvar_zips": "/home/ubuntu/volume/SB/projects/d3b-bixu-ops/radiant-vep105-test/gnomad.v3.1.1.custom.echtvar.zip",
+    "override_suffix": "test_echt"
 }
