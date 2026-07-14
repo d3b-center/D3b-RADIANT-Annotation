@@ -65,8 +65,8 @@ If you enable SLIVAR, all of the following must be provided:
 As mentioned above, Slivar does require some annotations. For more information see [our notes](./docs/slivar_compound_hets_notes.md).
 
 #### EXOMISER ENABLED
- - `analysis_file`: YAML with analysis options. See https://exomiser.readthedocs.io/en/latest/advanced_analysis.html#analysis. Recommend `default_exomiser_WGS_analysis.yml`
- - `datadir_file`: TAR GZ with reference files. Example contents:
+- `analysis_file`: YAML with analysis options. See https://exomiser.readthedocs.io/en/latest/advanced_analysis.html#analysis. Recommend `default_exomiser_WGS_analysis.yml`
+- `datadir_file`: TAR GZ with reference files. Example contents:
     ```
     data/
     data/remm/
@@ -135,71 +135,70 @@ As mentioned above, Slivar does require some annotations. For more information s
     data/2406_phenotype/phenix/ALL_SOURCES_ALL_FREQUENCIES_genes_to_phenotype.txt
     data/2406_phenotype/hp.obo
     ```
- - `pheno_file`: YAML file with sample information
+
+- `exomiser_pheno_file`: YAML file with sample information
     - Individual example:
-      ```yaml
-        ---
-        id: FM_ZCF17CPC
-        proband:
-        subject:
-            id: BS_4JPDCXVR
-            sex: MALE
-        phenotypicFeatures:
-            - type:
-                id: HP:0009733
-                label: Glioma
-        pedigree:
-        persons:
-            - individualId: BS_4JPDCXVR
-            sex: MALE
-            affectedStatus: AFFECTED
+    ```yaml
+    ---
+    id: FM_ZCF17CPC
+    proband:
+    subject:
+        id: BS_4JPDCXVR
+        sex: MALE
+    phenotypicFeatures:
+        - type:
+            id: HP:0009733
+            label: Glioma
+    pedigree:
+    persons:
+        - individualId: BS_4JPDCXVR
+        sex: MALE
+        affectedStatus: AFFECTED
 
-        metaData:
-        resources:
-            - id: hp
-            name: human phenotype ontology
-            url: http://purl.obolibrary.org/obo/hp.owl
-            version: hp/releases/2019-11-08
-            namespacePrefix: HP
-            iriPrefix: 'http://purl.obolibrary.org/obo/HP_'
-        phenopacketSchemaVersion: 2.0
-      ```
+    metaData:
+    resources:
+        - id: hp
+        name: human phenotype ontology
+        url: http://purl.obolibrary.org/obo/hp.owl
+        version: hp/releases/2019-11-08
+        namespacePrefix: HP
+        iriPrefix: 'http://purl.obolibrary.org/obo/HP_'
+    phenopacketSchemaVersion: 2.0
+    ```
     - Family example:
-       ```yaml
-        ---
-        id: FM_ASMHHE2N
-        proband:
-        subject:
-            id: BS_KPAR4N94
-            sex: MALE
-        phenotypicFeatures:
-            - type:
-                id: HP:0009733
-        pedigree:
-        persons:
-            - individualId: BS_KPAR4N94
-            sex: MALE
-            paternalId: BS_264QQD38
-            maternalId: BS_EQ98CJJT
-            affectedStatus: AFFECTED
-            - individualId: BS_264QQD38
-            sex: MALE
-            affectedStatus: UNAFFECTED
-            - individualId: BS_EQ98CJJT
-            sex: FEMALE
-            affectedStatus: UNAFFECTED
-        metaData:
-        resources:
-            - id: hp
-            name: human phenotype ontology
-            url: http://purl.obolibrary.org/obo/hp.owl
-            version: hp/releases/2019-11-08
-            namespacePrefix: HP
-            iriPrefix: 'http://purl.obolibrary.org/obo/HP_'
-        phenopacketSchemaVersion: 2.0
-
-       ```
-
+    ```yaml
+    ---
+    id: FM_ASMHHE2N
+    proband:
+    subject:
+        id: BS_KPAR4N94
+        sex: MALE
+    phenotypicFeatures:
+        - type:
+            id: HP:0009733
+    pedigree:
+    persons:
+        - individualId: BS_KPAR4N94
+        sex: MALE
+        paternalId: BS_264QQD38
+        maternalId: BS_EQ98CJJT
+        affectedStatus: AFFECTED
+        - individualId: BS_264QQD38
+        sex: MALE
+        affectedStatus: UNAFFECTED
+        - individualId: BS_EQ98CJJT
+        sex: FEMALE
+        affectedStatus: UNAFFECTED
+    metaData:
+    resources:
+        - id: hp
+        name: human phenotype ontology
+        url: http://purl.obolibrary.org/obo/hp.owl
+        version: hp/releases/2019-11-08
+        namespacePrefix: HP
+        iriPrefix: 'http://purl.obolibrary.org/obo/HP_'
+    phenopacketSchemaVersion: 2.0
+    ```
 ### Input Defaults and Run Configurations
 
 All of the defaults can be found in params block of `nextflow.config`.
@@ -262,5 +261,8 @@ Here's a snapshot of the run configuration for Kids First Germline data:
 
 - `echtvar`: Used for fast gnomAD annotation from the `echtvar_zips` input (gnomad.v3.1.1.custom.echtvar.zip)
 - `slivar`: Used for rare variant discovery, primarily in joint family VCFs using the `expr` with the `slivar_zips` input (topmed.hg38.dbsnp.151.zip)  and `compount-hets` modules
-- `exomiser`: "The Exomiser is a Java program that finds potential disease-causing variants from whole-exome or whole-genome sequencing data." See https://github.com/exomiser/Exomiser for more details
+- `exomiser`: "The Exomiser is a Java program that finds potential disease-causing variants from whole-exome or whole-genome sequencing data." Requires phenotype information. See https://github.com/exomiser/Exomiser for more details
 - `annot_vcf_infix`: For ANNOTATED_VCF output files only, give a string here to override the common string after output basename and before .vcf.gz Normally the output name is `params.output_basename` + `tool-contributed string` + `vcf.gz[.tbi]` which becomes: `params.output_basename` + `params.annot_vcf_infix` + `vcf.gz[.tbi]`
+
+## Bix Ops Cheatsheet
+See [here](docs/BIX_OPS_CHEATSHEET.md)
