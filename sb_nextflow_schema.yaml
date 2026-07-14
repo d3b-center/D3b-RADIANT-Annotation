@@ -16,11 +16,12 @@ requirements:
           {
           multiallelics: inputs.multiallelics ? inputs.multiallelics : "-any",
           bcftools_strip_extra_args: inputs.bcftools_strip_extra_args ? inputs.bcftools_strip_extra_args : "",
-          disable_bcftools_strip_anno: inputs.disable_bcftools_strip_anno ? inputs.disable_bcftools_strip_anno : false,
-          disable_bcftools_norm: inputs.disable_bcftools_norm ? inputs.disable_bcftools_norm : false,
-          disable_vep: inputs.disable_vep ? inputs.disable_vep : false,
-          disable_echtvar_anno: inputs.disable_echtvar_anno ? inputs.disable_echtvar_anno : false,
-          disable_slivar_compound_hets: inputs.disable_slivar_compound_hets ? inputs.disable_slivar_compound_hets : true,
+          disable_bcftools_strip_anno: inputs.disable_bcftools_strip_anno !== null? inputs.disable_bcftools_strip_anno : false,
+          disable_bcftools_norm: inputs.disable_bcftools_norm !== null ? inputs.disable_bcftools_norm : false,
+          disable_vep: inputs.disable_vep !== null ? inputs.disable_vep : false,
+          disable_echtvar_anno: inputs.disable_echtvar_anno !== null ? inputs.disable_echtvar_anno : false,
+          disable_exomiser: inputs.disable_exomiser !== null ? inputs.disable_exomiser : true,
+          disable_slivar_compound_hets: inputs.disable_slivar_compound_hets !== null ? inputs.disable_slivar_compound_hets : true,
           sbg_run: true
           }
           ))
@@ -94,7 +95,7 @@ doc: |
 
     #### EXOMISER ENABLED
     - `analysis_file`: YAML with analysis options. See https://exomiser.readthedocs.io/en/latest/advanced_analysis.html#analysis. Recommend `default_exomiser_WGS_analysis.yml`
-    - `datadir_file`: TAR GZ with referenece files. Example contents:
+    - `datadir_file`: TAR GZ with reference files. Example contents:
         ```
         data/
         data/remm/
@@ -290,6 +291,7 @@ doc: |
     - `echtvar`: Used for fast gnomAD annotation from the `echtvar_zips` input (gnomad.v3.1.1.custom.echtvar.zip)
     - `slivar`: Used for rare variant discovery, primarily in joint family VCFs using the `expr` with the `slivar_zips` input (topmed.hg38.dbsnp.151.zip)  and `compount-hets` modules
     - `exomiser`: "The Exomiser is a Java program that finds potential disease-causing variants from whole-exome or whole-genome sequencing data." See https://github.com/exomiser/Exomiser for more details
+    - `annot_vcf_infix`: String used for production purposes to override tool-contributed portion of file name for ANNOTATED_VCF output
 
 hints:
 -   class: sbg:NextflowExecutionMode
@@ -433,7 +435,7 @@ inputs:
     - 'null'
     - boolean
     doc: "Set to true to skip site-based annotation with echtvar. NF default is false"
--   id: ectvar_gnomad_zip
+-   id: echtvar_zips
     inputBinding:
         prefix: --echtvar_zips
     type:
@@ -573,6 +575,13 @@ inputs:
     type:
     - File
     sbg:suggestedValue: { class: File, path: 60639014357c3a53540ca7a3, name: Homo_sapiens_assembly38.fasta }
+-   id: annot_vcf_infix
+    inputBinding:
+        prefix: --annot_vcf_infix
+    type:
+    - 'null'
+    - string
+    doc: "For ANNOTATED_VCF output files only, give a string here to override the common string after output basename and before .vcf.gz Normally the output name is `params.output_basename` + `tool-contributed string` + `vcf.gz[.tbi]` which becomes: `params.output_basename` + `params.annot_vcf_infix` + `vcf.gz[.tbi]`"
 
 outputs:
 -   id: ANNOTATED_VCF
@@ -603,5 +612,5 @@ $namespaces:
 - VEP
 - EXOMISER
 "sbg:links":
-- id: 'https://github.com/d3b-center/D3b-RADIANT-Annotation/releases/tag/v1.0.0'
+- id: 'https://github.com/d3b-center/D3b-RADIANT-Annotation/releases/tag/v2.0.0'
   label: github-release

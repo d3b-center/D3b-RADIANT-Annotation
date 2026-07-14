@@ -2,7 +2,6 @@
 
 include { BCFTOOLS_ANNOTATE as BCFTOOLS_STRIP } from './modules/local/bcftools/annotate/main'
 include { BCFTOOLS_NORM } from './modules/local/bcftools/norm/main'
-include { UNTAR as UNTAR_EXOMISER } from './modules/local/tar/main'
 include { ENSEMBLVEP_VEP } from './modules/local/ensemblvep/vep/main'
 include { ECHTVAR_ANNO } from './modules/local/echtvar/anno/main'
 include { SLIVAR_EXPR } from './modules/local/slivar/expr/main'
@@ -85,6 +84,7 @@ def validate_params(param_obj) {
 
   if (errors) {
     log.error(errors.join("\n"))
+    error("Parameter validation failed. Did you miss an input or forget to disable a tool?")
   }
 }
 
