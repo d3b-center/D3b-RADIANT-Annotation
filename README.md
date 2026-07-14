@@ -263,6 +263,4 @@ Here's a snapshot of the run configuration for Kids First Germline data:
 - `echtvar`: Used for fast gnomAD annotation from the `echtvar_zips` input (gnomad.v3.1.1.custom.echtvar.zip)
 - `slivar`: Used for rare variant discovery, primarily in joint family VCFs using the `expr` with the `slivar_zips` input (topmed.hg38.dbsnp.151.zip)  and `compount-hets` modules
 - `exomiser`: "The Exomiser is a Java program that finds potential disease-causing variants from whole-exome or whole-genome sequencing data." See https://github.com/exomiser/Exomiser for more details
-- `override_suffix`: String used for production purposes to override tool-contributed portion of file name for ANNOTATED_VCF output.
-Normally the output name is `params.output_basename` + `tool-contributed string` + `vcf.gz[.tbi]` which becomes:
- `params.output_basename` + `params.override_suffix` + `vcf.gz[.tbi]`
+- `annot_vcf_infix`: For ANNOTATED_VCF output files only, give a string here to override the common string after output basename and before .vcf.gz Normally the output name is `params.output_basename` + `tool-contributed string` + `vcf.gz[.tbi]` which becomes: `params.output_basename` + `params.annot_vcf_infix` + `vcf.gz[.tbi]`

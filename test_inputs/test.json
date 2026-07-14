@@ -10,5 +10,5 @@
     "disable_bcftools_norm": true,
     "aws_test_instance": true,
     "echtvar_zips": "/home/ubuntu/volume/SB/projects/d3b-bixu-ops/radiant-vep105-test/gnomad.v3.1.1.custom.echtvar.zip",
-    "override_suffix": "test_echt"
+    "annot_vcf_infix": "test_echt"
 }
