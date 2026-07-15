@@ -322,6 +322,13 @@ inputs:
     type:
     - string
     doc: String prefix of file outputs.
+-   id: min_disk
+    inputBinding:
+        prefix: --min_disk
+    type:
+    - 'null'
+    - int
+    doc: Minimum disk space in GB to request for each process. Default is 100GB. Lower values may save costs, but may cause processes to fail if they run out of disk space. NF default 100.
 -   id: disable_bcftools_strip_anno
     type:
     - 'null'
