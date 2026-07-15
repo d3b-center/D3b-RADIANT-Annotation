@@ -263,6 +263,7 @@ Here's a snapshot of the run configuration for Kids First Germline data:
 - `slivar`: Used for rare variant discovery, primarily in joint family VCFs using the `expr` with the `slivar_zips` input (topmed.hg38.dbsnp.151.zip)  and `compount-hets` modules
 - `exomiser`: "The Exomiser is a Java program that finds potential disease-causing variants from whole-exome or whole-genome sequencing data." Requires phenotype information. See https://github.com/exomiser/Exomiser for more details
 - `annot_vcf_infix`: For ANNOTATED_VCF output files only, give a string here to override the common string after output basename and before .vcf.gz Normally the output name is `params.output_basename` + `tool-contributed string` + `vcf.gz[.tbi]` which becomes: `params.output_basename` + `params.annot_vcf_infix` + `vcf.gz[.tbi]`
+- `min_disk`: Currently CAVATICA-specific, set min disk size to save on EBS storage. Default 100GB (exomier tool min 400)
 
 ## Bix Ops Cheatsheet
 See [here](docs/BIX_OPS_CHEATSHEET.md)

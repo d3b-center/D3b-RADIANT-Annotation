@@ -292,6 +292,7 @@ doc: |
     - `slivar`: Used for rare variant discovery, primarily in joint family VCFs using the `expr` with the `slivar_zips` input (topmed.hg38.dbsnp.151.zip)  and `compount-hets` modules
     - `exomiser`: "The Exomiser is a Java program that finds potential disease-causing variants from whole-exome or whole-genome sequencing data." See https://github.com/exomiser/Exomiser for more details
     - `annot_vcf_infix`: String used for production purposes to override tool-contributed portion of file name for ANNOTATED_VCF output
+    - `min_disk`: Currently CAVATICA-specific, set min disk size to save on EBS storage. Default 100GB (exomier tool min 400)
 
 hints:
 -   class: sbg:NextflowExecutionMode
@@ -619,5 +620,5 @@ $namespaces:
 - VEP
 - EXOMISER
 "sbg:links":
-- id: 'https://github.com/d3b-center/D3b-RADIANT-Annotation/releases/tag/v2.0.0'
+- id: 'https://github.com/d3b-center/D3b-RADIANT-Annotation/releases/tag/v2.0.1'
   label: github-release
