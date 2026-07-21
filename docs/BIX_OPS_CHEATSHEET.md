@@ -3,7 +3,7 @@ Quick reference for bix Ops team to quickly deploy
 ## Generic:
 - `output_basename`: `{cavatica_task_ID}.[BS/FM]XXXXX_hard-filtered_dragen_4.4`
 - `annot_vcf_infix`: `vep105`
-- `min_disk`: Currently CAVATICA-specific, set min disk size to save on EBS storage. Default 100GB (exomier tool min 400)
+- `min_disk`: Currently CAVATICA-specific, set min disk size to save on EBS storage. Default 100GB (exomiser tool min 400)
 ## Has phenotype:
 - `disable_exomiser`: `false`
 - `exomiser_pheno_file`: YAML file with sample information
