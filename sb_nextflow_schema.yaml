@@ -605,12 +605,6 @@ outputs:
         glob: 'results/EXOMISER/*exomiser*'
     type:
     - File?
--   id: SLIVAR
-    label: SLIVAR
-    outputBinding:
-        glob: 'results/SLIVAR/*vcf.gz*'
-    type:
-    - File?
 
 $namespaces:
   sbg: https://sevenbridges.com

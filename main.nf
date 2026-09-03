@@ -1,6 +1,7 @@
 #!/usr/bin/env nextflow
 
 include { BCFTOOLS_ANNOTATE as BCFTOOLS_STRIP } from './modules/local/bcftools/annotate/main'
+include { BCFTOOLS_ANNOTATE as BCFTOOLS_ANNOT_SLIVAR } from './modules/local/bcftools/annotate/main'
 include { BCFTOOLS_NORM } from './modules/local/bcftools/norm/main'
 include { ENSEMBLVEP_VEP } from './modules/local/ensemblvep/vep/main'
 include { ECHTVAR_ANNO } from './modules/local/echtvar/anno/main'
@@ -133,7 +134,7 @@ workflow {
       }
     }
 
-    indexed_vcf = vcf.combine(vcf_index).map{ v, i -> [["id": "TEST"], v, i]}
+    indexed_vcf = vcf.combine(vcf_index).map{ v, i -> [[], v, i]}
 
     if (!params.disable_bcftools_strip_anno){
       BCFTOOLS_STRIP(
@@ -183,6 +184,12 @@ workflow {
         SLIVAR_EXPR.out.filtered_vcf,
         ped
       )
+      BCFTOOLS_ANNOT_SLIVAR(
+        indexed_vcf,
+        SLIVAR_COMPOUND_HETS.out.compound_hets.map{ _m, sli_vcf, _t -> sli_vcf },
+        SLIVAR_COMPOUND_HETS.out.compound_hets.map{ _m, _v, sli_tbi -> sli_tbi }
+      )
+      indexed_vcf = BCFTOOLS_ANNOT_SLIVAR.out.annotated_vcf
     }
 
     if (!params.disable_exomiser) {
