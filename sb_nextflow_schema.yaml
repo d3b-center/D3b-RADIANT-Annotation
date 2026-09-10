@@ -614,5 +614,5 @@ $namespaces:
 - VEP
 - EXOMISER
 "sbg:links":
-- id: 'https://github.com/d3b-center/D3b-RADIANT-Annotation/releases/tag/v2.0.1'
+- id: 'https://github.com/d3b-center/D3b-RADIANT-Annotation/releases/tag/v2.1.0'
   label: github-release
