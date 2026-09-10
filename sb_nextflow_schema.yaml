@@ -450,7 +450,7 @@ inputs:
     - 'null'
     - File[]
     doc: Echtvar-formated ZIP file containing gnomAD annotation information.
-    sbg:suggestedValue: { class: File, path: 65c64d847dab7758206248c6, name: gnomad.v3.1.1.custom.echtvar.zip}
+    sbg:suggestedValue: [{ class: File, path: 65c64d847dab7758206248c6, name: gnomad.v3.1.1.custom.echtvar.zip}]
 -   id: disable_slivar_compound_hets
     type:
     - 'null'
